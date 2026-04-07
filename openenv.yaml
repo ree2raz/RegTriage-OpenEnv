@@ -1,0 +1,86 @@
+# OpenEnv Environment Manifest
+name: regtriage
+version: "2.0.0"
+description: >
+  An OpenEnv environment for training RL agents on financial services regulatory
+  compliance auditing and revenue leakage detection. The agent acts as an automated
+  QA scout, producing Draft Incident Reports for human supervisor sign-off. Targets
+  six enterprise violation types: regulatory disclosure failures, failed escalations,
+  unauthorized commitments, incorrect hold procedures, PII exposure risks, and
+  churn save policy breaches. Uses a compute budget with weighted action costs
+  to simulate real-world auditor resource constraints. Grading uses severity-weighted
+  F1 with auto-fail for missed critical violations.
+
+# Task definitions (12 tasks: 4 easy, 4 medium, 4 hard)
+tasks:
+  - id: call_001
+    difficulty: easy
+    description: "Balance inquiry — regulatory disclosure failure"
+  - id: call_002
+    difficulty: easy
+    description: "Account status check — fully compliant call (no violations)"
+  - id: call_003
+    difficulty: easy
+    description: "Statement question — PII exposure risk (full SSN request)"
+  - id: call_004
+    difficulty: easy
+    description: "Payment confirmation — fully compliant call (no violations)"
+  - id: call_005
+    difficulty: medium
+    description: "Billing dispute — failed escalation and unauthorized commitment"
+  - id: call_006
+    difficulty: medium
+    description: "Refinance threat — churn save policy breach (Hero Agent) and hold violation"
+  - id: call_007
+    difficulty: medium
+    description: "Add authorized user — PII exposure and regulatory disclosure failure"
+  - id: call_008
+    difficulty: medium
+    description: "Mortgage modification — unauthorized rate guarantee and hold violation"
+  - id: call_009
+    difficulty: hard
+    description: "Multiple billing discrepancies — disclosure failure, failed escalation, unauthorized reversal"
+  - id: call_010
+    difficulty: hard
+    description: "Collections (Hero Agent) — churn save breach, PII exposure, failed escalation, hold violation"
+  - id: call_011
+    difficulty: hard
+    description: "Auto loan refinance — disclosure failure, unauthorized rate lock, unnecessary PII"
+  - id: call_012
+    difficulty: hard
+    description: "Collections follow-up — churn save breach, failed escalation, disclosure failure"
+
+# Action space
+action_space:
+  type: AuditAction
+  tools:
+    - get_call_metadata
+    - get_sentiment_timeline
+    - read_transcript_chunk
+    - analyze_turn
+    - flag_violation
+    - submit_report
+
+# Scoring
+scoring:
+  budget_formula: "50 + (total_turns × 3)"
+  action_costs:
+    get_call_metadata: 5
+    get_sentiment_timeline: 5
+    read_transcript_chunk: "3 per turn requested"
+    analyze_turn: 10
+    flag_violation: 2
+    submit_report: 0
+  components:
+    compliance_correct: 0.20
+    violation_f1_weighted: 0.60
+    efficiency_bonus: 0.20
+  bonuses:
+    severity_calibration: "+0.02 per exact severity match"
+  penalties:
+    false_positive_high: -0.10
+    false_positive_medium: -0.05
+    false_positive_low: -0.03
+  auto_fail:
+    condition: "All high-severity violations missed"
+    score_cap: 0.30

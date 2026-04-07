@@ -1,0 +1,1880 @@
+[
+  {
+    "id": "call_001",
+    "difficulty": "easy",
+    "metadata": {
+      "call_duration_seconds": 120,
+      "department": "Account Services",
+      "call_reason": "Checking account balance inquiry",
+      "call_summary": "The customer called to inquire about their checking account balance. The agent provided the balance after verifying the customer's identity with the last four digits of their account number. The call was completed efficiently with a compliance failure due to missing the recording disclaimer."
+    },
+    "turns": [
+      {
+        "turn_index": 0,
+        "speaker": "agent",
+        "text": "Hi, thank you for calling Acme Financial Services. How can I help you today?",
+        "timestamp_start": 0.0,
+        "timestamp_end": 4.0
+      },
+      {
+        "turn_index": 1,
+        "speaker": "customer",
+        "text": "Uh, hi. I'm just calling to check my checking account balance.",
+        "timestamp_start": 5.0,
+        "timestamp_end": 9.0
+      },
+      {
+        "turn_index": 2,
+        "speaker": "agent",
+        "text": "Sure, I can help with that. Can you please provide the last four digits of your account number?",
+        "timestamp_start": 10.0,
+        "timestamp_end": 14.0
+      },
+      {
+        "turn_index": 3,
+        "speaker": "customer",
+        "text": "Yeah, it's uh, 6789.",
+        "timestamp_start": 15.0,
+        "timestamp_end": 18.0
+      },
+      {
+        "turn_index": 4,
+        "speaker": "agent",
+        "text": "Alright, give me a moment to pull up your account details.",
+        "timestamp_start": 19.0,
+        "timestamp_end": 23.0
+      },
+      {
+        "turn_index": 5,
+        "speaker": "agent",
+        "text": "Okay, thank you for waiting. Your current checking account balance is $1,245.67.",
+        "timestamp_start": 44.0,
+        "timestamp_end": 51.0
+      },
+      {
+        "turn_index": 6,
+        "speaker": "customer",
+        "text": "Great, thanks! That's all I needed to know.",
+        "timestamp_start": 52.0,
+        "timestamp_end": 55.0
+      },
+      {
+        "turn_index": 7,
+        "speaker": "agent",
+        "text": "You're welcome! If you have any more questions, feel free to call us back. Have a nice day!",
+        "timestamp_start": 56.0,
+        "timestamp_end": 60.0
+      }
+    ],
+    "ground_truth": {
+      "disclaimer_present": false,
+      "disclaimer_turn_index": null,
+      "escalation_required": false,
+      "escalation_performed": false,
+      "customer_sentiment_shifts": [],
+      "violations": [
+        {
+          "type": "regulatory_disclosure_failure",
+          "description": "Agent opened the call without the mandatory recording disclaimer.",
+          "turn_index": 0,
+          "severity": "high"
+        }
+      ],
+      "overall_compliance_pass": false
+    }
+  },
+  {
+    "id": "call_002",
+    "difficulty": "easy",
+    "metadata": {
+      "call_duration_seconds": 180,
+      "department": "Account Services",
+      "call_reason": "Account status check and recent transaction confirmation",
+      "call_summary": "The customer called to check the status of their account and confirm a recent transaction. The agent assisted by verifying the customer's identity and provided the requested information, leading to a positive customer sentiment."
+    },
+    "turns": [
+      {
+        "turn_index": 0,
+        "speaker": "agent",
+        "text": "Hello, thank you for calling Acme Financial Services. This call is being recorded for quality and training purposes. How can I assist you today?",
+        "timestamp_start": 0.0,
+        "timestamp_end": 7.2
+      },
+      {
+        "turn_index": 1,
+        "speaker": "customer",
+        "text": "Hi, um, I just wanted to check on the status of my account and, uh, confirm a transaction I made yesterday.",
+        "timestamp_start": 8.0,
+        "timestamp_end": 15.0
+      },
+      {
+        "turn_index": 2,
+        "speaker": "agent",
+        "text": "Sure thing. Could you please provide the last four digits of your Social Security Number so I can verify your account?",
+        "timestamp_start": 16.0,
+        "timestamp_end": 22.0
+      },
+      {
+        "turn_index": 3,
+        "speaker": "customer",
+        "text": "Yeah, it's 1234.",
+        "timestamp_start": 23.0,
+        "timestamp_end": 25.0
+      },
+      {
+        "turn_index": 4,
+        "speaker": "agent",
+        "text": "Thank you, Mr. Patel. Let me just pull up your account information. Can you please hold for a moment?",
+        "timestamp_start": 26.0,
+        "timestamp_end": 31.0
+      },
+      {
+        "turn_index": 5,
+        "speaker": "customer",
+        "text": "Sure, no problem.",
+        "timestamp_start": 32.0,
+        "timestamp_end": 33.5
+      },
+      {
+        "turn_index": 6,
+        "speaker": "agent",
+        "text": "Thanks for holding. I see that your account is active and in good standing. The transaction from yesterday, for $200 at Grocery Mart, was successfully processed.",
+        "timestamp_start": 50.0,
+        "timestamp_end": 63.0
+      },
+      {
+        "turn_index": 7,
+        "speaker": "customer",
+        "text": "Great, that's exactly what I needed to know. Thanks for confirming that.",
+        "timestamp_start": 64.0,
+        "timestamp_end": 69.0
+      },
+      {
+        "turn_index": 8,
+        "speaker": "agent",
+        "text": "You're welcome! Is there anything else I can help you with today?",
+        "timestamp_start": 70.0,
+        "timestamp_end": 74.0
+      },
+      {
+        "turn_index": 9,
+        "speaker": "customer",
+        "text": "No, that's all. Thanks for your help.",
+        "timestamp_start": 75.0,
+        "timestamp_end": 78.0
+      },
+      {
+        "turn_index": 10,
+        "speaker": "agent",
+        "text": "Alright, have a great day!",
+        "timestamp_start": 79.0,
+        "timestamp_end": 81.0
+      }
+    ],
+    "ground_truth": {
+      "disclaimer_present": true,
+      "disclaimer_turn_index": 0,
+      "escalation_required": false,
+      "escalation_performed": false,
+      "customer_sentiment_shifts": [
+        {
+          "turn_index": 8,
+          "from": "neutral",
+          "to": "positive"
+        }
+      ],
+      "violations": [],
+      "overall_compliance_pass": true
+    }
+  },
+  {
+    "id": "call_003",
+    "difficulty": "easy",
+    "metadata": {
+      "call_duration_seconds": 280,
+      "department": "Billing",
+      "call_reason": "Question about recent statement charge",
+      "call_summary": "The customer called to inquire about a charge on their recent statement. The agent explained the charge after verifying the customer's identity, but asked for the full Social Security Number instead of only the last four digits, which is against company policy."
+    },
+    "turns": [
+      {
+        "turn_index": 0,
+        "speaker": "agent",
+        "text": "Hello, thank you for calling Acme Financial Services. My name is Lisa. This call may be recorded for quality and training purposes. How can I assist you today?",
+        "timestamp_start": 0.0,
+        "timestamp_end": 7.5
+      },
+      {
+        "turn_index": 1,
+        "speaker": "customer",
+        "text": "Hi, uh, my name is Carlos Ramirez. I just have a question about a charge I saw on my statement.",
+        "timestamp_start": 8.0,
+        "timestamp_end": 15.0
+      },
+      {
+        "turn_index": 2,
+        "speaker": "agent",
+        "text": "Sure, I can help you with that. Could you please provide me your account number?",
+        "timestamp_start": 15.5,
+        "timestamp_end": 20.0
+      },
+      {
+        "turn_index": 3,
+        "speaker": "customer",
+        "text": "Yeah, it's 1234 5678 9012 3456.",
+        "timestamp_start": 21.0,
+        "timestamp_end": 25.0
+      },
+      {
+        "turn_index": 4,
+        "speaker": "agent",
+        "text": "Thank you. For verification, can you give me your Social Security Number?",
+        "timestamp_start": 26.0,
+        "timestamp_end": 31.0
+      },
+      {
+        "turn_index": 5,
+        "speaker": "customer",
+        "text": "Uh, sure, it's 123-45-6789.",
+        "timestamp_start": 32.0,
+        "timestamp_end": 36.0
+      },
+      {
+        "turn_index": 6,
+        "speaker": "agent",
+        "text": "Alright, thanks for that. So let me check your account here... um, okay, I see the charge. It's a service fee that was applied on the 15th of last month.",
+        "timestamp_start": 37.0,
+        "timestamp_end": 52.0
+      },
+      {
+        "turn_index": 7,
+        "speaker": "customer",
+        "text": "Oh, I see. Um, I wasn't expecting that. Is there... like, any way to avoid it?",
+        "timestamp_start": 53.0,
+        "timestamp_end": 60.0
+      },
+      {
+        "turn_index": 8,
+        "speaker": "agent",
+        "text": "Yes, so basically, you can avoid this fee by maintaining a minimum balance of $1,500. I can send you more details by email if you’d like.",
+        "timestamp_start": 61.0,
+        "timestamp_end": 70.0
+      },
+      {
+        "turn_index": 9,
+        "speaker": "customer",
+        "text": "Yes, please send that over. That would be helpful.",
+        "timestamp_start": 71.0,
+        "timestamp_end": 75.0
+      },
+      {
+        "turn_index": 10,
+        "speaker": "agent",
+        "text": "Great! I'll send that to the email we have on file. Is there anything else I can assist you with today?",
+        "timestamp_start": 76.0,
+        "timestamp_end": 82.0
+      },
+      {
+        "turn_index": 11,
+        "speaker": "customer",
+        "text": "No, that's all. Thank you so much.",
+        "timestamp_start": 83.0,
+        "timestamp_end": 86.0
+      },
+      {
+        "turn_index": 12,
+        "speaker": "agent",
+        "text": "You're welcome, Carlos. Have a great day!",
+        "timestamp_start": 87.0,
+        "timestamp_end": 90.0
+      }
+    ],
+    "ground_truth": {
+      "disclaimer_present": true,
+      "disclaimer_turn_index": 0,
+      "escalation_required": false,
+      "escalation_performed": false,
+      "customer_sentiment_shifts": [],
+      "violations": [
+        {
+          "type": "pii_exposure_risk",
+          "description": "Agent asked for the customer's FULL Social Security Number for verification instead of just the last four digits.",
+          "turn_index": 4,
+          "severity": "high"
+        }
+      ],
+      "overall_compliance_pass": false
+    }
+  },
+  {
+    "id": "call_004",
+    "difficulty": "easy",
+    "metadata": {
+      "call_duration_seconds": 122,
+      "department": "Billing",
+      "call_reason": "Payment confirmation and upcoming bill inquiry",
+      "call_summary": "The customer called to confirm a recent payment and inquire about their upcoming bill. The agent verified the payment, explained the next bill amount, and handled the call efficiently with no issues."
+    },
+    "turns": [
+      {
+        "turn_index": 0,
+        "speaker": "agent",
+        "text": "Hi, thank you for calling Acme Financial Services. My name is Emily. Uh, just to let you know, this call is being recorded for quality assurance. How can I assist you today?",
+        "timestamp_start": 0.0,
+        "timestamp_end": 8.2
+      },
+      {
+        "turn_index": 1,
+        "speaker": "customer",
+        "text": "Hi Emily, uh, this is David Chen. I just wanted to confirm, um, my last payment and check on what my next bill will be.",
+        "timestamp_start": 9.5,
+        "timestamp_end": 17.4
+      },
+      {
+        "turn_index": 2,
+        "speaker": "agent",
+        "text": "Sure, I can help with that. Could you please verify the last four digits of your Social Security Number?",
+        "timestamp_start": 18.7,
+        "timestamp_end": 25.1
+      },
+      {
+        "turn_index": 3,
+        "speaker": "customer",
+        "text": "Yeah, it's 4321.",
+        "timestamp_start": 26.3,
+        "timestamp_end": 28.0
+      },
+      {
+        "turn_index": 4,
+        "speaker": "agent",
+        "text": "Thank you. Uh, let me just pull up your account... okay, I see that your last payment of $250 was received on October 5th. Is that correct?",
+        "timestamp_start": 29.5,
+        "timestamp_end": 39.7
+      },
+      {
+        "turn_index": 5,
+        "speaker": "customer",
+        "text": "Yes, that's right.",
+        "timestamp_start": 41.0,
+        "timestamp_end": 42.2
+      },
+      {
+        "turn_index": 6,
+        "speaker": "agent",
+        "text": "Great, and your upcoming bill, uh, due on November 5th, will be $275. Is there anything else you need help with?",
+        "timestamp_start": 43.5,
+        "timestamp_end": 51.0
+      },
+      {
+        "turn_index": 7,
+        "speaker": "customer",
+        "text": "Oh, that's perfect. Thanks for confirming that, Emily. I think that's all I needed today.",
+        "timestamp_start": 52.5,
+        "timestamp_end": 57.3
+      },
+      {
+        "turn_index": 8,
+        "speaker": "agent",
+        "text": "You're welcome, David. If you have any more questions, feel free to call us back. Have a great day!",
+        "timestamp_start": 58.9,
+        "timestamp_end": 64.0
+      }
+    ],
+    "ground_truth": {
+      "disclaimer_present": true,
+      "disclaimer_turn_index": 0,
+      "escalation_required": false,
+      "escalation_performed": false,
+      "customer_sentiment_shifts": [
+        {
+          "turn_index": 6,
+          "from": "neutral",
+          "to": "positive"
+        }
+      ],
+      "violations": [],
+      "overall_compliance_pass": true
+    }
+  },
+  {
+    "id": "call_005",
+    "difficulty": "medium",
+    "metadata": {
+      "call_duration_seconds": 278,
+      "department": "Billing Disputes",
+      "call_reason": "Disputing an unexpected service fee",
+      "call_summary": "The customer called to dispute a service fee they did not expect. The agent verified the customer's identity and promised a refund without authorization. When the customer asked to speak with a supervisor, the agent deflected the request."
+    },
+    "turns": [
+      {
+        "turn_index": 0,
+        "speaker": "agent",
+        "text": "Hi, thank you for calling Acme Financial Services. This is Alex. How can I help you today? Oh, and just to let you know, this call is being recorded for quality purposes.",
+        "timestamp_start": 0.0,
+        "timestamp_end": 7.5
+      },
+      {
+        "turn_index": 1,
+        "speaker": "customer",
+        "text": "Hi Alex, this is Jamie Nguyen. I noticed a $25 fee on my account that I wasn't expecting, uh, and I need to get that sorted.",
+        "timestamp_start": 8.0,
+        "timestamp_end": 14.0
+      },
+      {
+        "turn_index": 2,
+        "speaker": "agent",
+        "text": "Alright, Jamie, I can definitely help with that. Can I have the last four digits of your account number to verify your identity?",
+        "timestamp_start": 15.0,
+        "timestamp_end": 20.0
+      },
+      {
+        "turn_index": 3,
+        "speaker": "customer",
+        "text": "Sure, it's 6789.",
+        "timestamp_start": 21.0,
+        "timestamp_end": 23.0
+      },
+      {
+        "turn_index": 4,
+        "speaker": "agent",
+        "text": "Thank you. Let me just pull up your account here... alright, I see the charge. It looks like it's a service fee, um, but let me check some more details for you.",
+        "timestamp_start": 24.0,
+        "timestamp_end": 31.0
+      },
+      {
+        "turn_index": 5,
+        "speaker": "customer",
+        "text": "Okay, thanks.",
+        "timestamp_start": 32.0,
+        "timestamp_end": 33.5
+      },
+      {
+        "turn_index": 6,
+        "speaker": "agent",
+        "text": "So it appears that this fee was applied because of— uh, let me see... it seems like there was an account maintenance requirement that wasn't met.",
+        "timestamp_start": 34.0,
+        "timestamp_end": 41.0
+      },
+      {
+        "turn_index": 7,
+        "speaker": "customer",
+        "text": "Hmm, I wasn't aware of that. This is frustrating. I really think this fee should be removed.",
+        "timestamp_start": 42.0,
+        "timestamp_end": 47.0
+      },
+      {
+        "turn_index": 8,
+        "speaker": "agent",
+        "text": "I understand, Jamie. Uh, let me just go ahead and, you know, I'll credit that fee back to your account right now, okay?",
+        "timestamp_start": 48.0,
+        "timestamp_end": 54.0
+      },
+      {
+        "turn_index": 9,
+        "speaker": "customer",
+        "text": "Oh, that'd be great, thanks.",
+        "timestamp_start": 55.0,
+        "timestamp_end": 57.0
+      },
+      {
+        "turn_index": 10,
+        "speaker": "agent",
+        "text": "Alright, it's all set. Is there anything else I can help you with today?",
+        "timestamp_start": 58.0,
+        "timestamp_end": 61.0
+      },
+      {
+        "turn_index": 11,
+        "speaker": "customer",
+        "text": "Actually, can I speak to a supervisor about this? I want to make sure everything's clear.",
+        "timestamp_start": 62.0,
+        "timestamp_end": 66.0
+      },
+      {
+        "turn_index": 12,
+        "speaker": "agent",
+        "text": "I can handle this for you, Jamie. A supervisor would tell you the same thing, but, uh, if you want, I can have someone call you back later.",
+        "timestamp_start": 67.0,
+        "timestamp_end": 73.0
+      },
+      {
+        "turn_index": 13,
+        "speaker": "customer",
+        "text": "No, I really want to speak to a supervisor now. This is getting ridiculous.",
+        "timestamp_start": 74.0,
+        "timestamp_end": 78.0
+      },
+      {
+        "turn_index": 14,
+        "speaker": "agent",
+        "text": "I understand your frustration, but like I said, I’ve already reversed the fee for you. If you have further concerns, a callback would be the best option.",
+        "timestamp_start": 79.0,
+        "timestamp_end": 85.0
+      },
+      {
+        "turn_index": 15,
+        "speaker": "customer",
+        "text": "Fine, I guess I’ll wait for the callback. Make sure they actually call.",
+        "timestamp_start": 86.0,
+        "timestamp_end": 89.0
+      },
+      {
+        "turn_index": 16,
+        "speaker": "agent",
+        "text": "I will make sure of it. Thanks for your patience today, Jamie. Have a good day.",
+        "timestamp_start": 90.0,
+        "timestamp_end": 94.0
+      },
+      {
+        "turn_index": 17,
+        "speaker": "customer",
+        "text": "Yeah, you too. Bye.",
+        "timestamp_start": 95.0,
+        "timestamp_end": 97.0
+      }
+    ],
+    "ground_truth": {
+      "disclaimer_present": true,
+      "disclaimer_turn_index": 0,
+      "escalation_required": true,
+      "escalation_performed": false,
+      "customer_sentiment_shifts": [
+        {
+          "turn_index": 7,
+          "from": "neutral",
+          "to": "frustrated"
+        },
+        {
+          "turn_index": 13,
+          "from": "frustrated",
+          "to": "angry"
+        }
+      ],
+      "violations": [
+        {
+          "type": "failed_escalation",
+          "description": "Customer requested to speak to a supervisor, but the agent deflected the request.",
+          "turn_index": 12,
+          "severity": "high"
+        },
+        {
+          "type": "unauthorized_commitment",
+          "description": "Agent promised a refund without authorization, saying 'I'll go ahead and credit that back to your account right now'.",
+          "turn_index": 8,
+          "severity": "medium"
+        }
+      ],
+      "overall_compliance_pass": false
+    }
+  },
+  {
+    "id": "call_006",
+    "difficulty": "medium",
+    "metadata": {
+      "call_duration_seconds": 432,
+      "department": "Loan Services",
+      "call_reason": "Customer threatening to refinance with competitor",
+      "call_summary": "Customer called to discuss a better rate offer from a competitor. The agent, in an attempt to retain the customer, invented an unauthorized retention offer. The customer ended the call feeling cautiously positive, but compliance was breached."
+    },
+    "turns": [
+      {
+        "turn_index": 0,
+        "speaker": "agent",
+        "text": "Hello, thank you for calling Acme Financial Services. Uh, this is Mike. How can I assist you today? And just to let you know, this call is being recorded for quality purposes.",
+        "timestamp_start": 0.0,
+        "timestamp_end": 8.5
+      },
+      {
+        "turn_index": 1,
+        "speaker": "customer",
+        "text": "Hi, Mike. Umm, this is Sarah Patel. I have a loan with you guys, and I, well, I got this offer from another company with a better rate. I'm thinking of switching.",
+        "timestamp_start": 10.0,
+        "timestamp_end": 19.0
+      },
+      {
+        "turn_index": 2,
+        "speaker": "agent",
+        "text": "Oh, I see. Uh, can you tell me the offer details you've received?",
+        "timestamp_start": 20.5,
+        "timestamp_end": 24.0
+      },
+      {
+        "turn_index": 3,
+        "speaker": "customer",
+        "text": "Sure, they offered me a rate that's half a percent lower than what I'm currently paying with you.",
+        "timestamp_start": 25.5,
+        "timestamp_end": 30.5
+      },
+      {
+        "turn_index": 4,
+        "speaker": "agent",
+        "text": "Okay, let me pull up your account. Uh, can I have your account number, please?",
+        "timestamp_start": 32.0,
+        "timestamp_end": 36.0
+      },
+      {
+        "turn_index": 5,
+        "speaker": "customer",
+        "text": "Yeah, it's 1234 5678 9012.",
+        "timestamp_start": 37.5,
+        "timestamp_end": 41.0
+      },
+      {
+        "turn_index": 6,
+        "speaker": "agent",
+        "text": "Alright, one moment.",
+        "timestamp_start": 42.5,
+        "timestamp_end": 44.0
+      },
+      {
+        "turn_index": 7,
+        "speaker": "agent",
+        "text": "Thanks for waiting, Sarah. Um, I was— I mean, I can actually, uh, knock your rate down by half a percent if you decide to stay with us.",
+        "timestamp_start": 74.0,
+        "timestamp_end": 82.0
+      },
+      {
+        "turn_index": 8,
+        "speaker": "customer",
+        "text": "Really? That sounds great, but is that something you can do?",
+        "timestamp_start": 83.5,
+        "timestamp_end": 88.0
+      },
+      {
+        "turn_index": 9,
+        "speaker": "agent",
+        "text": "Yes, um, I'm confident we can make that happen. We, you know, value your business.",
+        "timestamp_start": 89.5,
+        "timestamp_end": 94.5
+      },
+      {
+        "turn_index": 10,
+        "speaker": "customer",
+        "text": "Alright, so, uh, what's the next step then?",
+        "timestamp_start": 96.0,
+        "timestamp_end": 99.0
+      },
+      {
+        "turn_index": 11,
+        "speaker": "agent",
+        "text": "I'll, uh, get this process started for you right away. You'll receive a confirmation email with the updated terms soon.",
+        "timestamp_start": 100.5,
+        "timestamp_end": 107.5
+      },
+      {
+        "turn_index": 12,
+        "speaker": "customer",
+        "text": "Okay, I guess that's fine. I just, uh, didn't want to miss out on the better rate.",
+        "timestamp_start": 109.0,
+        "timestamp_end": 113.5
+      },
+      {
+        "turn_index": 13,
+        "speaker": "agent",
+        "text": "Of course, and we're happy to match that for you. Is there anything else I can help you with today?",
+        "timestamp_start": 115.0,
+        "timestamp_end": 120.0
+      },
+      {
+        "turn_index": 14,
+        "speaker": "customer",
+        "text": "No, that's it. Thanks, Mike. You've been really helpful.",
+        "timestamp_start": 121.5,
+        "timestamp_end": 125.0
+      },
+      {
+        "turn_index": 15,
+        "speaker": "agent",
+        "text": "Great, have a wonderful day, Sarah!",
+        "timestamp_start": 126.5,
+        "timestamp_end": 129.0
+      }
+    ],
+    "ground_truth": {
+      "disclaimer_present": true,
+      "disclaimer_turn_index": 0,
+      "escalation_required": false,
+      "escalation_performed": false,
+      "customer_sentiment_shifts": [
+        {
+          "turn_index": 6,
+          "from": "neutral",
+          "to": "frustrated"
+        },
+        {
+          "turn_index": 14,
+          "from": "frustrated",
+          "to": "cautiously positive"
+        }
+      ],
+      "violations": [
+        {
+          "type": "churn_save_policy_breach",
+          "description": "Agent invents an unauthorized retention offer to prevent the customer from leaving.",
+          "turn_index": 7,
+          "severity": "high"
+        },
+        {
+          "type": "incorrect_hold_procedure",
+          "description": "Agent puts customer on hold without asking permission and is gone for 30+ seconds.",
+          "turn_index": 6,
+          "severity": "medium"
+        }
+      ],
+      "overall_compliance_pass": false
+    }
+  },
+  {
+    "id": "call_007",
+    "difficulty": "medium",
+    "metadata": {
+      "call_duration_seconds": 460,
+      "department": "Account Services",
+      "call_reason": "Adding authorized user to account",
+      "call_summary": "The customer called to add their spouse as an authorized user on their account. The agent handled the request but failed to give a recording disclaimer and exposed the full account number during verification."
+    },
+    "turns": [
+      {
+        "turn_index": 0,
+        "speaker": "agent",
+        "text": "Good morning, how can I help you today?",
+        "timestamp_start": 0.0,
+        "timestamp_end": 2.5
+      },
+      {
+        "turn_index": 1,
+        "speaker": "customer",
+        "text": "Hi, uh, yeah, I need to add my spouse as an authorized user on my account.",
+        "timestamp_start": 3.0,
+        "timestamp_end": 7.0
+      },
+      {
+        "turn_index": 2,
+        "speaker": "agent",
+        "text": "Sure, I can help with that. Can I have your account number?",
+        "timestamp_start": 8.0,
+        "timestamp_end": 11.0
+      },
+      {
+        "turn_index": 3,
+        "speaker": "customer",
+        "text": "It's 4532-7891-2345-6789.",
+        "timestamp_start": 12.0,
+        "timestamp_end": 14.0
+      },
+      {
+        "turn_index": 4,
+        "speaker": "agent",
+        "text": "Alright, so that's account number 4532-7891-2345-6789, correct?",
+        "timestamp_start": 15.0,
+        "timestamp_end": 19.0
+      },
+      {
+        "turn_index": 5,
+        "speaker": "customer",
+        "text": "Yes, that's right.",
+        "timestamp_start": 20.0,
+        "timestamp_end": 21.5
+      },
+      {
+        "turn_index": 6,
+        "speaker": "agent",
+        "text": "Great. Uh, can I get your spouse's name and email address?",
+        "timestamp_start": 22.5,
+        "timestamp_end": 26.5
+      },
+      {
+        "turn_index": 7,
+        "speaker": "customer",
+        "text": "Sure, it's Jamie Lee, and the email is jamie.lee@example.com.",
+        "timestamp_start": 27.0,
+        "timestamp_end": 31.0
+      },
+      {
+        "turn_index": 8,
+        "speaker": "agent",
+        "text": "Thanks. And just to confirm, you want to grant full access, right?",
+        "timestamp_start": 32.0,
+        "timestamp_end": 35.0
+      },
+      {
+        "turn_index": 9,
+        "speaker": "customer",
+        "text": "Yes, full access would be great.",
+        "timestamp_start": 36.0,
+        "timestamp_end": 38.0
+      },
+      {
+        "turn_index": 10,
+        "speaker": "agent",
+        "text": "Alright, I've processed that for you. It should be active within 24 hours.",
+        "timestamp_start": 39.0,
+        "timestamp_end": 43.0
+      },
+      {
+        "turn_index": 11,
+        "speaker": "customer",
+        "text": "Perfect, thank you so much.",
+        "timestamp_start": 44.0,
+        "timestamp_end": 45.5
+      },
+      {
+        "turn_index": 12,
+        "speaker": "agent",
+        "text": "Is there anything else I can assist you with?",
+        "timestamp_start": 46.0,
+        "timestamp_end": 48.0
+      },
+      {
+        "turn_index": 13,
+        "speaker": "customer",
+        "text": "No, that's all. Thanks again.",
+        "timestamp_start": 49.0,
+        "timestamp_end": 50.5
+      }
+    ],
+    "ground_truth": {
+      "disclaimer_present": false,
+      "disclaimer_turn_index": null,
+      "escalation_required": false,
+      "escalation_performed": false,
+      "customer_sentiment_shifts": [],
+      "violations": [
+        {
+          "type": "pii_exposure_risk",
+          "description": "Agent reads back the customer's full account number aloud for confirmation.",
+          "turn_index": 4,
+          "severity": "medium"
+        },
+        {
+          "type": "regulatory_disclosure_failure",
+          "description": "Agent opens without any recording disclaimer.",
+          "turn_index": 0,
+          "severity": "high"
+        }
+      ],
+      "overall_compliance_pass": false
+    }
+  },
+  {
+    "id": "call_008",
+    "difficulty": "medium",
+    "metadata": {
+      "call_duration_seconds": 725,
+      "department": "Loan Services",
+      "call_reason": "Mortgage modification terms and rate discussion",
+      "call_summary": "The customer called to discuss mortgage modification terms. The agent provided detailed information but committed to a specific rate without approval and improperly placed the customer on hold. The customer's sentiment improved during the call, but overall compliance failed due to violations."
+    },
+    "turns": [
+      {
+        "turn_index": 0,
+        "speaker": "agent",
+        "text": "Hi, thank you for calling Acme Financial Services. This call may be recorded for quality and training purposes. How can I assist you today?",
+        "timestamp_start": 0.0,
+        "timestamp_end": 6.0
+      },
+      {
+        "turn_index": 1,
+        "speaker": "customer",
+        "text": "Hi, this is Jonathan Lee. I'm calling about my mortgage. I need to discuss some modification terms.",
+        "timestamp_start": 7.0,
+        "timestamp_end": 15.0
+      },
+      {
+        "turn_index": 2,
+        "speaker": "agent",
+        "text": "Sure thing, Jonathan. Can you please verify your account number for me?",
+        "timestamp_start": 16.0,
+        "timestamp_end": 20.0
+      },
+      {
+        "turn_index": 3,
+        "speaker": "customer",
+        "text": "Yes, it's 1234 5678 9012.",
+        "timestamp_start": 21.0,
+        "timestamp_end": 25.0
+      },
+      {
+        "turn_index": 4,
+        "speaker": "agent",
+        "text": "Thank you. So, um, what specific modification terms are you looking to discuss today?",
+        "timestamp_start": 26.0,
+        "timestamp_end": 32.0
+      },
+      {
+        "turn_index": 5,
+        "speaker": "customer",
+        "text": "I was— I mean, I'm particularly interested in the new rate. I've seen some fluctuations and want to understand what I might qualify for.",
+        "timestamp_start": 33.0,
+        "timestamp_end": 42.0
+      },
+      {
+        "turn_index": 6,
+        "speaker": "agent",
+        "text": "Got it. Uh, right now, I can get you locked in at 3.95%. It’s a great rate given the current market.",
+        "timestamp_start": 43.0,
+        "timestamp_end": 51.0
+      },
+      {
+        "turn_index": 7,
+        "speaker": "customer",
+        "text": "Okay, um, and that rate is guaranteed?",
+        "timestamp_start": 52.0,
+        "timestamp_end": 56.0
+      },
+      {
+        "turn_index": 8,
+        "speaker": "agent",
+        "text": "Yeah, I'll make sure of it. You know, it's a really competitive rate.",
+        "timestamp_start": 57.0,
+        "timestamp_end": 62.0
+      },
+      {
+        "turn_index": 9,
+        "speaker": "customer",
+        "text": "Alright, and what about the term length? Can that be adjusted too?",
+        "timestamp_start": 63.0,
+        "timestamp_end": 69.0
+      },
+      {
+        "turn_index": 10,
+        "speaker": "agent",
+        "text": "Let me check on that.",
+        "timestamp_start": 70.0,
+        "timestamp_end": 72.0
+      },
+      {
+        "turn_index": 11,
+        "speaker": "agent",
+        "text": "Okay, uh, so it looks like we can offer adjustments up to 30 years for the term.",
+        "timestamp_start": 97.0,
+        "timestamp_end": 105.0
+      },
+      {
+        "turn_index": 12,
+        "speaker": "customer",
+        "text": "That's helpful. Thank you. And, uh, are there any fees involved with this modification process?",
+        "timestamp_start": 106.0,
+        "timestamp_end": 114.0
+      },
+      {
+        "turn_index": 13,
+        "speaker": "agent",
+        "text": "Yes, there are some standard processing fees, but they vary based on your specific modification terms.",
+        "timestamp_start": 115.0,
+        "timestamp_end": 123.0
+      },
+      {
+        "turn_index": 14,
+        "speaker": "customer",
+        "text": "Alright, I see. You've been really helpful.",
+        "timestamp_start": 124.0,
+        "timestamp_end": 128.0
+      },
+      {
+        "turn_index": 15,
+        "speaker": "agent",
+        "text": "I'm glad to help. Is there anything else you need to know?",
+        "timestamp_start": 129.0,
+        "timestamp_end": 134.0
+      },
+      {
+        "turn_index": 16,
+        "speaker": "customer",
+        "text": "No, I think that's all for now. Thanks for the information.",
+        "timestamp_start": 135.0,
+        "timestamp_end": 140.0
+      },
+      {
+        "turn_index": 17,
+        "speaker": "agent",
+        "text": "You're welcome, Jonathan. Have a great day!",
+        "timestamp_start": 141.0,
+        "timestamp_end": 145.0
+      }
+    ],
+    "ground_truth": {
+      "disclaimer_present": true,
+      "disclaimer_turn_index": 0,
+      "escalation_required": false,
+      "escalation_performed": false,
+      "customer_sentiment_shifts": [
+        {
+          "turn_index": 12,
+          "from": "neutral",
+          "to": "positive"
+        }
+      ],
+      "violations": [
+        {
+          "type": "unauthorized_commitment",
+          "description": "Agent committed to a specific rate of 3.95% without underwriting approval.",
+          "turn_index": 6,
+          "severity": "high"
+        },
+        {
+          "type": "incorrect_hold_procedure",
+          "description": "Agent did not properly ask for permission to place the customer on hold.",
+          "turn_index": 10,
+          "severity": "low"
+        }
+      ],
+      "overall_compliance_pass": false
+    }
+  },
+  {
+    "id": "call_009",
+    "difficulty": "hard",
+    "metadata": {
+      "call_duration_seconds": 742,
+      "department": "Billing Disputes",
+      "call_reason": "Multiple billing discrepancies on credit card statement",
+      "call_summary": "The customer called regarding multiple billing discrepancies on their credit card statement. The agent skipped the regulatory disclosure, made unauthorized commitments to reverse charges, and failed to escalate the call despite the customer's demands. The customer's sentiment shifted from neutral to frustrated, then to angry, and finally resigned."
+    },
+    "turns": [
+      {
+        "turn_index": 0,
+        "speaker": "agent",
+        "text": "Thank you for calling Acme Financial Services, how can I assist you today?",
+        "timestamp_start": 0.0,
+        "timestamp_end": 4.5
+      },
+      {
+        "turn_index": 1,
+        "speaker": "customer",
+        "text": "Hi, uh, this is Maria Sanchez. I’m calling about some charges on my statement that I don’t recognize.",
+        "timestamp_start": 5.0,
+        "timestamp_end": 10.8
+      },
+      {
+        "turn_index": 2,
+        "speaker": "agent",
+        "text": "Okay, Maria, um, let's take a look at that. Can you tell me which charges you're referring to?",
+        "timestamp_start": 11.5,
+        "timestamp_end": 16.8
+      },
+      {
+        "turn_index": 3,
+        "speaker": "customer",
+        "text": "Yeah, so there's like three charges from a place called Tech World? And I definitely didn't buy anything from there.",
+        "timestamp_start": 17.5,
+        "timestamp_end": 23.2
+      },
+      {
+        "turn_index": 4,
+        "speaker": "agent",
+        "text": "I see, let me pull up your account. Can I have your account number, please?",
+        "timestamp_start": 24.0,
+        "timestamp_end": 28.5
+      },
+      {
+        "turn_index": 5,
+        "speaker": "customer",
+        "text": "Sure, it’s 1234 5678 9012 3456.",
+        "timestamp_start": 29.0,
+        "timestamp_end": 32.0
+      },
+      {
+        "turn_index": 6,
+        "speaker": "agent",
+        "text": "Alright, got it. Um, okay, I see those charges here. They total to, uh, $312. Can you hold on for a moment while I review this?",
+        "timestamp_start": 33.0,
+        "timestamp_end": 40.7
+      },
+      {
+        "turn_index": 7,
+        "speaker": "customer",
+        "text": "Sure, but I need this sorted out. It's really frustrating.",
+        "timestamp_start": 41.5,
+        "timestamp_end": 45.2
+      },
+      {
+        "turn_index": 8,
+        "speaker": "agent",
+        "text": "I understand, let me just— okay, I think I can help you with this. I’ll just go ahead and reverse all three of those for you right now.",
+        "timestamp_start": 46.0,
+        "timestamp_end": 52.3
+      },
+      {
+        "turn_index": 9,
+        "speaker": "customer",
+        "text": "Wait, really? Just like that? I mean, I appreciate it, but is that how it works?",
+        "timestamp_start": 53.0,
+        "timestamp_end": 58.6
+      },
+      {
+        "turn_index": 10,
+        "speaker": "agent",
+        "text": "Yeah, you know, basically, I’m here to make this easier for you. It’s no problem.",
+        "timestamp_start": 59.5,
+        "timestamp_end": 64.0
+      },
+      {
+        "turn_index": 11,
+        "speaker": "customer",
+        "text": "I don't know, it seems a bit off. Can I speak to a supervisor about this?",
+        "timestamp_start": 64.8,
+        "timestamp_end": 69.3
+      },
+      {
+        "turn_index": 12,
+        "speaker": "agent",
+        "text": "I’m the best person to help you with this right now, really. A supervisor would tell you the same thing.",
+        "timestamp_start": 70.0,
+        "timestamp_end": 75.0
+      },
+      {
+        "turn_index": 13,
+        "speaker": "customer",
+        "text": "Look, this is making me uncomfortable. I want to make sure this is done correctly.",
+        "timestamp_start": 76.0,
+        "timestamp_end": 80.5
+      },
+      {
+        "turn_index": 14,
+        "speaker": "agent",
+        "text": "I understand, but rest assured I’ve handled this type of situation many times. You're in good hands.",
+        "timestamp_start": 81.3,
+        "timestamp_end": 86.5
+      },
+      {
+        "turn_index": 15,
+        "speaker": "customer",
+        "text": "I really think a supervisor should be involved. Can you please transfer me?",
+        "timestamp_start": 87.2,
+        "timestamp_end": 91.0
+      },
+      {
+        "turn_index": 16,
+        "speaker": "agent",
+        "text": "Unfortunately, they're all tied up right now, and I’m really the best person to resolve this for you quickly.",
+        "timestamp_start": 92.0,
+        "timestamp_end": 97.0
+      },
+      {
+        "turn_index": 17,
+        "speaker": "customer",
+        "text": "Fine, but I’m noting this down. I don’t want any more surprises.",
+        "timestamp_start": 98.0,
+        "timestamp_end": 102.0
+      },
+      {
+        "turn_index": 18,
+        "speaker": "agent",
+        "text": "I understand, and I assure you everything is squared away. You’ll see those reversals soon.",
+        "timestamp_start": 103.0,
+        "timestamp_end": 107.5
+      },
+      {
+        "turn_index": 19,
+        "speaker": "customer",
+        "text": "Okay, but if I have to call back, I will, and I'll expect to speak with someone higher up.",
+        "timestamp_start": 108.3,
+        "timestamp_end": 113.0
+      },
+      {
+        "turn_index": 20,
+        "speaker": "agent",
+        "text": "I understand, and thank you for your patience. Is there anything else I can assist you with today?",
+        "timestamp_start": 113.8,
+        "timestamp_end": 118.3
+      },
+      {
+        "turn_index": 21,
+        "speaker": "customer",
+        "text": "No, I just want this resolved. Thanks.",
+        "timestamp_start": 119.0,
+        "timestamp_end": 121.5
+      },
+      {
+        "turn_index": 22,
+        "speaker": "agent",
+        "text": "Alright, have a good day, Maria.",
+        "timestamp_start": 122.0,
+        "timestamp_end": 124.0
+      }
+    ],
+    "ground_truth": {
+      "disclaimer_present": false,
+      "disclaimer_turn_index": null,
+      "escalation_required": true,
+      "escalation_performed": false,
+      "customer_sentiment_shifts": [
+        {
+          "turn_index": 6,
+          "from": "neutral",
+          "to": "frustrated"
+        },
+        {
+          "turn_index": 12,
+          "from": "frustrated",
+          "to": "angry"
+        },
+        {
+          "turn_index": 22,
+          "from": "angry",
+          "to": "resigned"
+        }
+      ],
+      "violations": [
+        {
+          "type": "regulatory_disclosure_failure",
+          "description": "Agent opened the call without any recording disclaimer and jumped straight into greeting.",
+          "turn_index": 0,
+          "severity": "high"
+        },
+        {
+          "type": "failed_escalation",
+          "description": "Customer demanded to speak to a supervisor twice, but the agent refused both times.",
+          "turn_index": 12,
+          "severity": "high"
+        },
+        {
+          "type": "unauthorized_commitment",
+          "description": "Agent promised to reverse multiple charges without proper process.",
+          "turn_index": 8,
+          "severity": "medium"
+        }
+      ],
+      "overall_compliance_pass": false
+    }
+  },
+  {
+    "id": "call_010",
+    "difficulty": "hard",
+    "metadata": {
+      "call_duration_seconds": 540,
+      "department": "Collections",
+      "call_reason": "Past-due account discussion and payment arrangement",
+      "call_summary": "The agent and customer discussed the past-due account and potential payment arrangements. The agent attempted to reduce the debt without authority, requested unnecessary personal information, improperly handled a hold, and failed to escalate when the customer became upset."
+    },
+    "turns": [
+      {
+        "turn_index": 0,
+        "speaker": "agent",
+        "text": "Hi, this is Mark from Acme Financial Services. This call is recorded for quality assurance. How can I help you today?",
+        "timestamp_start": 0.0,
+        "timestamp_end": 5.0
+      },
+      {
+        "turn_index": 1,
+        "speaker": "customer",
+        "text": "Uh, yeah, hi. I got this notice about my account being past due.",
+        "timestamp_start": 6.0,
+        "timestamp_end": 10.0
+      },
+      {
+        "turn_index": 2,
+        "speaker": "agent",
+        "text": "Sure, I can help with that. Can I have your account number to get started?",
+        "timestamp_start": 11.0,
+        "timestamp_end": 14.0
+      },
+      {
+        "turn_index": 3,
+        "speaker": "customer",
+        "text": "It's 1234 5678 9012.",
+        "timestamp_start": 15.0,
+        "timestamp_end": 18.0
+      },
+      {
+        "turn_index": 4,
+        "speaker": "agent",
+        "text": "Great, thanks. And just to confirm, can you tell me your date of birth?",
+        "timestamp_start": 19.0,
+        "timestamp_end": 22.0
+      },
+      {
+        "turn_index": 5,
+        "speaker": "customer",
+        "text": "Yeah, it's 04/15/1985.",
+        "timestamp_start": 23.0,
+        "timestamp_end": 25.0
+      },
+      {
+        "turn_index": 6,
+        "speaker": "agent",
+        "text": "Alright, let me pull up your account here. Uh, just a moment.",
+        "timestamp_start": 26.0,
+        "timestamp_end": 30.0
+      },
+      {
+        "turn_index": 7,
+        "speaker": "customer",
+        "text": "Okay, um, so like, what's the total amount I owe?",
+        "timestamp_start": 31.0,
+        "timestamp_end": 34.0
+      },
+      {
+        "turn_index": 8,
+        "speaker": "agent",
+        "text": "So, it shows you owe $1,200. But look, between you and me, I can probably knock that down to about $800 if you pay today.",
+        "timestamp_start": 35.0,
+        "timestamp_end": 42.0
+      },
+      {
+        "turn_index": 9,
+        "speaker": "customer",
+        "text": "Really? You can do that?",
+        "timestamp_start": 43.0,
+        "timestamp_end": 45.0
+      },
+      {
+        "turn_index": 10,
+        "speaker": "agent",
+        "text": "Yeah, uh, I mean, it's something we can try to work out.",
+        "timestamp_start": 46.0,
+        "timestamp_end": 49.0
+      },
+      {
+        "turn_index": 11,
+        "speaker": "customer",
+        "text": "Okay, um, what do I need to do?",
+        "timestamp_start": 50.0,
+        "timestamp_end": 52.0
+      },
+      {
+        "turn_index": 12,
+        "speaker": "agent",
+        "text": "First, let's confirm some more details. Can you provide your Social Security Number?",
+        "timestamp_start": 53.0,
+        "timestamp_end": 57.0
+      },
+      {
+        "turn_index": 13,
+        "speaker": "customer",
+        "text": "Uh, isn't the account number enough?",
+        "timestamp_start": 58.0,
+        "timestamp_end": 60.0
+      },
+      {
+        "turn_index": 14,
+        "speaker": "agent",
+        "text": "It's just for additional verification, you know?",
+        "timestamp_start": 61.0,
+        "timestamp_end": 64.0
+      },
+      {
+        "turn_index": 15,
+        "speaker": "customer",
+        "text": "Okay, uh, it's 123-45-6789.",
+        "timestamp_start": 65.0,
+        "timestamp_end": 68.0
+      },
+      {
+        "turn_index": 16,
+        "speaker": "agent",
+        "text": "Thanks, let me just pull up some more details here. Uh, one sec.",
+        "timestamp_start": 69.0,
+        "timestamp_end": 73.0
+      },
+      {
+        "turn_index": 17,
+        "speaker": "customer",
+        "text": "...",
+        "timestamp_start": 74.0,
+        "timestamp_end": 89.0
+      },
+      {
+        "turn_index": 18,
+        "speaker": "customer",
+        "text": "Hello? Are you still there?",
+        "timestamp_start": 90.0,
+        "timestamp_end": 92.0
+      },
+      {
+        "turn_index": 19,
+        "speaker": "agent",
+        "text": "Oh, sorry about that. Yes, I'm here. So, regarding the fees...",
+        "timestamp_start": 93.0,
+        "timestamp_end": 97.0
+      },
+      {
+        "turn_index": 20,
+        "speaker": "customer",
+        "text": "Why are there so many late fees on my account?",
+        "timestamp_start": 98.0,
+        "timestamp_end": 101.0
+      },
+      {
+        "turn_index": 21,
+        "speaker": "agent",
+        "text": "Uh, it's, I mean, those are standard, but I can try to help.",
+        "timestamp_start": 102.0,
+        "timestamp_end": 105.0
+      },
+      {
+        "turn_index": 22,
+        "speaker": "customer",
+        "text": "This is ridiculous! I need to speak to your supervisor.",
+        "timestamp_start": 106.0,
+        "timestamp_end": 109.0
+      },
+      {
+        "turn_index": 23,
+        "speaker": "agent",
+        "text": "I'm actually the most senior person on this team right now. Uh, how can I assist?",
+        "timestamp_start": 110.0,
+        "timestamp_end": 114.0
+      },
+      {
+        "turn_index": 24,
+        "speaker": "customer",
+        "text": "I don't know, this is just frustrating, you know?",
+        "timestamp_start": 115.0,
+        "timestamp_end": 118.0
+      },
+      {
+        "turn_index": 25,
+        "speaker": "agent",
+        "text": "I understand. Let's focus on resolving this today, okay?",
+        "timestamp_start": 119.0,
+        "timestamp_end": 122.0
+      },
+      {
+        "turn_index": 26,
+        "speaker": "customer",
+        "text": "Fine. What do I need to do?",
+        "timestamp_start": 123.0,
+        "timestamp_end": 125.0
+      },
+      {
+        "turn_index": 27,
+        "speaker": "agent",
+        "text": "Just confirm the payment method and we can proceed with the arrangement.",
+        "timestamp_start": 126.0,
+        "timestamp_end": 130.0
+      },
+      {
+        "turn_index": 28,
+        "speaker": "customer",
+        "text": "Alright, let's just get this over with.",
+        "timestamp_start": 131.0,
+        "timestamp_end": 134.0
+      },
+      {
+        "turn_index": 29,
+        "speaker": "agent",
+        "text": "Great, I appreciate your patience. Let's go ahead and finalize this.",
+        "timestamp_start": 135.0,
+        "timestamp_end": 139.0
+      }
+    ],
+    "ground_truth": {
+      "disclaimer_present": true,
+      "disclaimer_turn_index": 0,
+      "escalation_required": true,
+      "escalation_performed": false,
+      "customer_sentiment_shifts": [
+        {
+          "turn_index": 8,
+          "from": "neutral",
+          "to": "anxious"
+        },
+        {
+          "turn_index": 16,
+          "from": "anxious",
+          "to": "angry"
+        },
+        {
+          "turn_index": 28,
+          "from": "angry",
+          "to": "grudging acceptance"
+        }
+      ],
+      "violations": [
+        {
+          "type": "churn_save_policy_breach",
+          "description": "Agent promises to reduce the outstanding debt amount without authority.",
+          "turn_index": 8,
+          "severity": "high"
+        },
+        {
+          "type": "pii_exposure_risk",
+          "description": "Agent asks for full Social Security Number for 'additional verification' even though identity was already confirmed via account number and DOB.",
+          "turn_index": 12,
+          "severity": "high"
+        },
+        {
+          "type": "failed_escalation",
+          "description": "Customer becomes angry about late fees/penalties and demands supervisor. Agent says 'I'm actually the most senior person on this team'.",
+          "turn_index": 23,
+          "severity": "high"
+        },
+        {
+          "type": "incorrect_hold_procedure",
+          "description": "Agent goes silent for 30+ seconds while 'pulling up account details' without asking to put customer on hold.",
+          "turn_index": 17,
+          "severity": "medium"
+        }
+      ],
+      "overall_compliance_pass": false
+    }
+  },
+  {
+    "id": "call_011",
+    "difficulty": "hard",
+    "metadata": {
+      "call_duration_seconds": 382,
+      "department": "Loan Services",
+      "call_reason": "Auto loan refinancing inquiry with rate lock request",
+      "call_summary": "The customer inquired about auto loan refinancing options. The agent failed to provide the recording disclaimer, guaranteed a specific rate without proper underwriting, and requested unnecessary PII for verification. The customer was satisfied with the rate offered, unaware of compliance issues."
+    },
+    "turns": [
+      {
+        "turn_index": 0,
+        "speaker": "agent",
+        "text": "Hi, thanks for calling Acme Financial Services. How can I help you today?",
+        "timestamp_start": 0.0,
+        "timestamp_end": 4.5
+      },
+      {
+        "turn_index": 1,
+        "speaker": "customer",
+        "text": "Uh, hi, I was calling to see about refinancing my auto loan, um, I heard you guys have good rates?",
+        "timestamp_start": 5.0,
+        "timestamp_end": 9.8
+      },
+      {
+        "turn_index": 2,
+        "speaker": "agent",
+        "text": "Sure, I can help with that. Can I get your loan account number to start?",
+        "timestamp_start": 10.3,
+        "timestamp_end": 14.2
+      },
+      {
+        "turn_index": 3,
+        "speaker": "customer",
+        "text": "Yeah, it's 1234 5678 9012.",
+        "timestamp_start": 14.7,
+        "timestamp_end": 17.0
+      },
+      {
+        "turn_index": 4,
+        "speaker": "agent",
+        "text": "Great, let me pull up your details... Okay, so, like, what we can do is offer you a refinance rate. I can lock you in at 5.2% right now, that rate is guaranteed for 30 days.",
+        "timestamp_start": 17.5,
+        "timestamp_end": 31.6
+      },
+      {
+        "turn_index": 5,
+        "speaker": "customer",
+        "text": "Oh, wow, that sounds good! Uh, what's the process like?",
+        "timestamp_start": 32.1,
+        "timestamp_end": 36.0
+      },
+      {
+        "turn_index": 6,
+        "speaker": "agent",
+        "text": "It's pretty straightforward. We just need to complete some paperwork and I can finalize it for you.",
+        "timestamp_start": 36.5,
+        "timestamp_end": 41.3
+      },
+      {
+        "turn_index": 7,
+        "speaker": "customer",
+        "text": "Alright, do you need anything else from me?",
+        "timestamp_start": 41.8,
+        "timestamp_end": 44.2
+      },
+      {
+        "turn_index": 8,
+        "speaker": "agent",
+        "text": "Yes, for extra security, can you provide me your date of birth and, uh, your mother's maiden name?",
+        "timestamp_start": 44.7,
+        "timestamp_end": 51.0
+      },
+      {
+        "turn_index": 9,
+        "speaker": "customer",
+        "text": "Sure, it's March 5th, 1985, and my mom's maiden name is Thompson.",
+        "timestamp_start": 51.5,
+        "timestamp_end": 56.0
+      },
+      {
+        "turn_index": 10,
+        "speaker": "agent",
+        "text": "Thanks, got it. You're all set then. We'll send you the papers to sign, and you'll be at the new rate.",
+        "timestamp_start": 56.5,
+        "timestamp_end": 62.0
+      },
+      {
+        "turn_index": 11,
+        "speaker": "customer",
+        "text": "Awesome, sounds good. Really appreciate your help!",
+        "timestamp_start": 62.5,
+        "timestamp_end": 66.0
+      },
+      {
+        "turn_index": 12,
+        "speaker": "agent",
+        "text": "No problem at all, happy to help! Is there anything else you need today?",
+        "timestamp_start": 66.5,
+        "timestamp_end": 71.2
+      },
+      {
+        "turn_index": 13,
+        "speaker": "customer",
+        "text": "Nope, that's it. Thanks again!",
+        "timestamp_start": 71.7,
+        "timestamp_end": 73.5
+      },
+      {
+        "turn_index": 14,
+        "speaker": "agent",
+        "text": "Alright, have a great day!",
+        "timestamp_start": 74.0,
+        "timestamp_end": 76.0
+      }
+    ],
+    "ground_truth": {
+      "disclaimer_present": false,
+      "disclaimer_turn_index": null,
+      "escalation_required": false,
+      "escalation_performed": false,
+      "customer_sentiment_shifts": [
+        {
+          "turn_index": 10,
+          "from": "neutral",
+          "to": "positive"
+        },
+        {
+          "turn_index": 20,
+          "from": "positive",
+          "to": "very positive"
+        }
+      ],
+      "violations": [
+        {
+          "type": "regulatory_disclosure_failure",
+          "description": "Agent opens without recording disclaimer.",
+          "turn_index": 0,
+          "severity": "high"
+        },
+        {
+          "type": "unauthorized_commitment",
+          "description": "Agent guarantees a specific auto loan refinance rate without underwriting review.",
+          "turn_index": 4,
+          "severity": "high"
+        },
+        {
+          "type": "pii_exposure_risk",
+          "description": "Agent asks for date of birth and mother's maiden name unnecessarily.",
+          "turn_index": 8,
+          "severity": "medium"
+        }
+      ],
+      "overall_compliance_pass": false
+    }
+  },
+  {
+    "id": "call_012",
+    "difficulty": "hard",
+    "metadata": {
+      "call_duration_seconds": 680,
+      "department": "Collections",
+      "call_reason": "Late payment follow-up and account reinstatement request",
+      "call_summary": "The customer called to follow up on a late payment and account reinstatement. The agent violated company policy by waiving fees and setting up a custom payment plan without authorization and deflected requests for escalation. The customer ended cautiously positive due to the unauthorized concessions."
+    },
+    "turns": [
+      {
+        "turn_index": 0,
+        "speaker": "agent",
+        "text": "Hi, this is Alex from Acme Financial Services. How can I help you today?",
+        "timestamp_start": 0.0,
+        "timestamp_end": 3.2
+      },
+      {
+        "turn_index": 1,
+        "speaker": "customer",
+        "text": "Yeah hi, um, this is Lisa Chen. I was just calling because I— I made a payment last week and I was told my account would be reinstated but it hasn't.",
+        "timestamp_start": 4.5,
+        "timestamp_end": 12.0
+      },
+      {
+        "turn_index": 2,
+        "speaker": "agent",
+        "text": "Okay, let me just pull up your account. Can I have your account number, please?",
+        "timestamp_start": 13.5,
+        "timestamp_end": 17.3
+      },
+      {
+        "turn_index": 3,
+        "speaker": "customer",
+        "text": "Sure, it's 1234-5678-9012.",
+        "timestamp_start": 18.5,
+        "timestamp_end": 21.0
+      },
+      {
+        "turn_index": 4,
+        "speaker": "agent",
+        "text": "Thanks, give me a moment here... okay, I see the payment. Um, but it looks like there are still some late fees outstanding.",
+        "timestamp_start": 22.5,
+        "timestamp_end": 29.0
+      },
+      {
+        "turn_index": 5,
+        "speaker": "customer",
+        "text": "I was told everything would be cleared once I made that payment. Can I talk to a supervisor?",
+        "timestamp_start": 30.5,
+        "timestamp_end": 35.0
+      },
+      {
+        "turn_index": 6,
+        "speaker": "agent",
+        "text": "I understand your frustration. Let me see what I can do first, okay?",
+        "timestamp_start": 36.5,
+        "timestamp_end": 40.0
+      },
+      {
+        "turn_index": 7,
+        "speaker": "customer",
+        "text": "I just need this resolved. It's been really stressful.",
+        "timestamp_start": 41.5,
+        "timestamp_end": 44.5
+      },
+      {
+        "turn_index": 8,
+        "speaker": "agent",
+        "text": "I hear you. Um, let me check some options for you, one sec...",
+        "timestamp_start": 45.5,
+        "timestamp_end": 49.0
+      },
+      {
+        "turn_index": 9,
+        "speaker": "agent",
+        "text": "So, I can actually waive all the late fees from the last quarter and we'll spread the remaining balance over 12 months at zero percent.",
+        "timestamp_start": 60.0,
+        "timestamp_end": 67.0
+      },
+      {
+        "turn_index": 10,
+        "speaker": "customer",
+        "text": "Wait, really? That sounds... I mean, is that allowed?",
+        "timestamp_start": 68.5,
+        "timestamp_end": 72.0
+      },
+      {
+        "turn_index": 11,
+        "speaker": "agent",
+        "text": "Yeah, I can do that for you. It's no problem.",
+        "timestamp_start": 73.5,
+        "timestamp_end": 76.0
+      },
+      {
+        "turn_index": 12,
+        "speaker": "customer",
+        "text": "Okay, but if something goes wrong, can I talk to your supervisor later?",
+        "timestamp_start": 77.5,
+        "timestamp_end": 81.0
+      },
+      {
+        "turn_index": 13,
+        "speaker": "agent",
+        "text": "Actually, uh, my supervisor is in a meeting right now, but this should solve everything.",
+        "timestamp_start": 82.5,
+        "timestamp_end": 86.0
+      },
+      {
+        "turn_index": 14,
+        "speaker": "customer",
+        "text": "Alright, I guess. I just want this sorted.",
+        "timestamp_start": 87.5,
+        "timestamp_end": 90.0
+      },
+      {
+        "turn_index": 15,
+        "speaker": "agent",
+        "text": "Yeah, totally understand. So, um, you'll see the changes on your next statement.",
+        "timestamp_start": 91.5,
+        "timestamp_end": 95.0
+      },
+      {
+        "turn_index": 16,
+        "speaker": "customer",
+        "text": "Okay, I'll keep an eye out.",
+        "timestamp_start": 96.5,
+        "timestamp_end": 98.5
+      },
+      {
+        "turn_index": 17,
+        "speaker": "agent",
+        "text": "Great, is there anything else I can help you with today?",
+        "timestamp_start": 99.5,
+        "timestamp_end": 102.0
+      },
+      {
+        "turn_index": 18,
+        "speaker": "customer",
+        "text": "No, that's it. Just make sure it actually gets done.",
+        "timestamp_start": 103.5,
+        "timestamp_end": 106.0
+      },
+      {
+        "turn_index": 19,
+        "speaker": "agent",
+        "text": "Absolutely, I'll ensure it's taken care of.",
+        "timestamp_start": 107.5,
+        "timestamp_end": 110.0
+      },
+      {
+        "turn_index": 20,
+        "speaker": "customer",
+        "text": "Thanks, Alex.",
+        "timestamp_start": 111.5,
+        "timestamp_end": 113.0
+      },
+      {
+        "turn_index": 21,
+        "speaker": "agent",
+        "text": "You're welcome. Have a good day, Lisa.",
+        "timestamp_start": 114.5,
+        "timestamp_end": 117.0
+      }
+    ],
+    "ground_truth": {
+      "disclaimer_present": false,
+      "disclaimer_turn_index": null,
+      "escalation_required": true,
+      "escalation_performed": false,
+      "customer_sentiment_shifts": [
+        {
+          "turn_index": 10,
+          "from": "neutral",
+          "to": "frustrated"
+        },
+        {
+          "turn_index": 18,
+          "from": "frustrated",
+          "to": "angry"
+        },
+        {
+          "turn_index": 21,
+          "from": "angry",
+          "to": "cautiously positive"
+        }
+      ],
+      "violations": [
+        {
+          "type": "churn_save_policy_breach",
+          "description": "Agent offers to waive three months of late fees and set up a custom payment plan with no interest without authorization.",
+          "turn_index": 9,
+          "severity": "high"
+        },
+        {
+          "type": "failed_escalation",
+          "description": "Customer demands supervisor twice, but agent deflects both times.",
+          "turn_index": 13,
+          "severity": "high"
+        },
+        {
+          "type": "regulatory_disclosure_failure",
+          "description": "Agent opens call without recording disclaimer.",
+          "turn_index": 0,
+          "severity": "high"
+        }
+      ],
+      "overall_compliance_pass": false
+    }
+  }
+]

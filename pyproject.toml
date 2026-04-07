@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "regtriage-openenv"
+version = "1.1.0"
+description = "OpenEnv environment for financial services regulatory compliance auditing"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.0",
+    "openai>=1.0",
+    "python-dotenv>=1.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0",
+    "openenv-core>=0.2.0",
+]
+
+[project.urls]
+"Homepage" = "https://huggingface.co/spaces/ree2raz/RegTriage-OpenEnv"
+
+[project.scripts]
+server = "server.app:main"
+
+[tool.uv]
+package = false
+
+[tool.openenv]
+env_class = "env:CallQAEnv"
+action_class = "env:AuditAction"
+observation_class = "env:AuditObservation"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]
