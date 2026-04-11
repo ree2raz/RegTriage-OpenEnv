@@ -581,6 +581,24 @@ def main():
     print(f"Overall: avg={sum(all_scores)/len(all_scores):.3f} | total_time={total_time:.1f}s", file=sys.stderr)
     print("="*60, file=sys.stderr)
 
+    # Save results to JSON file
+    output_file = "baseline_results.json"
+    with open(output_file, "w") as f:
+        json.dump({
+            "model": MODEL_NAME,
+            "benchmark": BENCHMARK,
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "results": all_results,
+            "summary": {
+                "easy_avg": sum(easy_scores)/len(easy_scores) if easy_scores else 0,
+                "medium_avg": sum(med_scores)/len(med_scores) if med_scores else 0,
+                "hard_avg": sum(hard_scores)/len(hard_scores) if hard_scores else 0,
+                "overall_avg": sum(all_scores)/len(all_scores) if all_scores else 0,
+                "total_time": total_time,
+            }
+        }, f, indent=2)
+    print(f"\nResults saved to {output_file}", file=sys.stderr)
+
     # Cleanup
     if args.use_client:
         env_client.__exit__(None, None, None)
