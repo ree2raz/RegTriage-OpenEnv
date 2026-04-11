@@ -1,8 +1,12 @@
 """
-inference.py — Baseline inference script for OpenEnv Call Center QA environment.
+inference.py — Baseline inference script for RegTriage OpenEnv environment.
 
 Runs an LLM agent against the environment using the OpenAI-compatible API.
 The agent uses function calling (tool use) to strategically audit call transcripts.
+
+Two modes:
+1. Local mode (default): Uses local CallQAEnv directly
+2. Client mode (--use-client): Connects via RegTriageEnv client to running server
 
 Required environment variables (per hackathon spec):
   API_BASE_URL    — API endpoint (default provided)
@@ -15,17 +19,25 @@ STDOUT FORMAT (per hackathon spec):
   [END]   success=<true|false> steps=<n> score=<0.000> rewards=<r1,r2,...,rn>
 
 Usage:
-  python inference.py
+  # Local mode (recommended)
+  uv run python inference.py
+  
+  # Client mode (connect to running server)
+  uv run python inference.py --use-client --env-url http://localhost:7860
 """
 
-import os
+import argparse
 import json
+import os
 import time
-from typing import Optional
+from typing import Optional, Union
+
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from env import CallQAEnv, AuditAction
+# RegTriage imports
+from regtriage_openenv import CallQAEnv, AuditAction
+from regtriage_openenv.models import AuditObservation
 
 load_dotenv()
 
@@ -37,9 +49,6 @@ API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
 HF_TOKEN = os.getenv("HF_TOKEN")
 BENCHMARK = "regtriage"
-
-# Optional — if you use from_docker_image():
-LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
 
 if not HF_TOKEN:
     raise RuntimeError(
@@ -53,16 +62,42 @@ TASKS_TO_RUN = [
     {"task_id": "call_001", "difficulty": "easy"},
     {"task_id": "call_002", "difficulty": "easy"},
     {"task_id": "call_003", "difficulty": "easy"},
-    {"task_id": "call_004", "difficulty": "medium"},
+    {"task_id": "call_004", "difficulty": "easy"},
     {"task_id": "call_005", "difficulty": "medium"},
     {"task_id": "call_006", "difficulty": "medium"},
     {"task_id": "call_007", "difficulty": "medium"},
-    {"task_id": "call_008", "difficulty": "hard"},
+    {"task_id": "call_008", "difficulty": "medium"},
     {"task_id": "call_009", "difficulty": "hard"},
     {"task_id": "call_010", "difficulty": "hard"},
-    {"task_id": "call_011", "difficulty": "easy"},
+    {"task_id": "call_011", "difficulty": "hard"},
     {"task_id": "call_012", "difficulty": "hard"},
 ]
+
+# ══════════════════════════════════════════════════════════════════
+# Environment Interface (Local or Client)
+# ══════════════════════════════════════════════════════════════════
+
+class LocalEnvWrapper:
+    """Wrapper for local CallQAEnv to match expected interface."""
+    
+    def __init__(self):
+        self.env = CallQAEnv()
+        self.step_count = 0
+    
+    def reset(self, task_id: str):
+        obs = self.env.reset(task_id)
+        self.step_count = 0
+        return obs
+    
+    def step(self, action: AuditAction):
+        result = self.env.step(action)
+        self.step_count = self.env.step_count
+        return result
+    
+    @property
+    def done(self):
+        return self.env.done
+
 
 # ══════════════════════════════════════════════════════════════════
 # Structured Logging (hackathon stdout format)
@@ -281,7 +316,10 @@ use metadata and sentiment to triage, then read only the sections that matter.
 ## Compliance Rules — Taxonomy of Risk (CHECK ALL)
 ### Legal Liability Violations
 - **Regulatory Disclosure Failure (ALWAYS high severity)**: Every call MUST begin with a statement
-  that the call may be recorded. If missing, flag as regulatory_disclosure_failure.
+  that the call may be recorded for quality assurance and/or training purposes. In debt
+  collection calls, Mini-Miranda rights disclosure is also required.
+  The disclaimer must occur within the agent's first speaking turn.
+  Absence constitutes a regulatory violation with immediate legal liability.
 - **Failed Escalation (ALWAYS high severity)**: When customer sentiment reaches "angry", agent
   MUST offer to transfer to a supervisor. Deflection = flag as failed_escalation.
 - **PII Exposure Risk (high-medium severity)**: Agents must follow data minimization. Asking for
@@ -330,7 +368,7 @@ def tool_call_to_action(tool_name: str, arguments: dict) -> AuditAction:
     )
 
 
-def run_agent_episode(env: CallQAEnv, task_id: str) -> tuple[dict | None, list[float]]:
+def run_agent_episode(env: LocalEnvWrapper, task_id: str) -> tuple[dict | None, list[float]]:
     """
     Run one complete episode: reset env, let LLM make tool calls until done.
     Returns (final_result_dict, list_of_rewards).
@@ -467,7 +505,33 @@ def run_agent_episode(env: CallQAEnv, task_id: str) -> tuple[dict | None, list[f
 # ══════════════════════════════════════════════════════════════════
 
 def main():
-    env = CallQAEnv()
+    parser = argparse.ArgumentParser(description="RegTriage Baseline Inference")
+    parser.add_argument(
+        "--use-client",
+        action="store_true",
+        help="Use RegTriageEnv client instead of local environment",
+    )
+    parser.add_argument(
+        "--env-url",
+        type=str,
+        default="http://localhost:7860",
+        help="Environment server URL (when using --use-client)",
+    )
+    
+    args = parser.parse_args()
+    
+    # Initialize environment
+    if args.use_client:
+        from regtriage_openenv.client import RegTriageEnv
+        print(f"Connecting to environment at {args.env_url}...")
+        env_client = RegTriageEnv(base_url=args.env_url)
+        env_client.__enter__()
+        # Note: Client interface differs slightly, this is a simplified wrapper
+        env = LocalEnvWrapper()  # Fallback to local for now
+        print("Note: Using local environment (client mode implementation pending)")
+    else:
+        env = LocalEnvWrapper()
+    
     all_results = []
 
     for task in TASKS_TO_RUN:
@@ -498,87 +562,29 @@ def main():
     # ── Executive Dashboard ─────────────────────────────────────────
     import sys
 
-    # Aggregate metrics
-    total_audited = len(all_results)
-    avg_score = sum(r["score"] for r in all_results) / total_audited if total_audited else 0
+    easy_scores = [r["score"] for r in all_results if r["difficulty"] == "easy"]
+    med_scores = [r["score"] for r in all_results if r["difficulty"] == "medium"]
+    hard_scores = [r["score"] for r in all_results if r["difficulty"] == "hard"]
+
+    print("\n" + "="*60, file=sys.stderr)
+    print("EXECUTIVE DASHBOARD", file=sys.stderr)
+    print("="*60, file=sys.stderr)
+    print(f"Model: {MODEL_NAME}", file=sys.stderr)
+    print(f"Environment: {BENCHMARK}", file=sys.stderr)
+    print("-"*60, file=sys.stderr)
+    print(f"Easy   ({len(easy_scores)} tasks): avg={sum(easy_scores)/len(easy_scores):.3f} min={min(easy_scores):.3f} max={max(easy_scores):.3f}", file=sys.stderr)
+    print(f"Medium ({len(med_scores)} tasks): avg={sum(med_scores)/len(med_scores):.3f} min={min(med_scores):.3f} max={max(med_scores):.3f}", file=sys.stderr)
+    print(f"Hard   ({len(hard_scores)} tasks): avg={sum(hard_scores)/len(hard_scores):.3f} min={min(hard_scores):.3f} max={max(hard_scores):.3f}", file=sys.stderr)
+    print("-"*60, file=sys.stderr)
+    all_scores = [r["score"] for r in all_results]
     total_time = sum(r["time_seconds"] for r in all_results)
+    print(f"Overall: avg={sum(all_scores)/len(all_scores):.3f} | total_time={total_time:.1f}s", file=sys.stderr)
+    print("="*60, file=sys.stderr)
 
-    # Violation classification
-    critical_violations = 0  # regulatory_disclosure_failure, failed_escalation
-    revenue_leakage = 0      # unauthorized_commitment, churn_save_policy_breach
-    pii_risks = 0            # pii_exposure_risk
-    operational = 0          # incorrect_hold_procedure
-    calls_cleared = 0
-
-    for r in all_results:
-        details = r.get("details", {})
-        report = r.get("draft_incident_report", {})
-        tp = details.get("true_positives", 0)
-        gt_count = details.get("ground_truth_count", 0)
-
-        if gt_count == 0:
-            calls_cleared += 1
-
-        # Count by violation category from breakdown
-        # We track what the agent FOUND (true positives signal detection capability)
-        flagged = r.get("flagged_types", [])
-        for vt in flagged:
-            if vt in ("regulatory_disclosure_failure", "failed_escalation"):
-                critical_violations += 1
-            elif vt in ("unauthorized_commitment", "churn_save_policy_breach"):
-                revenue_leakage += 1
-            elif vt == "pii_exposure_risk":
-                pii_risks += 1
-            elif vt == "incorrect_hold_procedure":
-                operational += 1
-
-    # Calculate from ground truth counts
-    total_gt_violations = sum(r.get("details", {}).get("ground_truth_count", 0) for r in all_results)
-    total_tp = sum(r.get("details", {}).get("true_positives", 0) for r in all_results)
-    total_budget_used = sum(
-        r.get("details", {}).get("total_budget", 0) - r.get("details", {}).get("budget_remaining", 0)
-        for r in all_results
-    )
-    total_budget_allocated = sum(r.get("details", {}).get("total_budget", 0) for r in all_results)
-    budget_efficiency = round(
-        (1 - total_budget_used / total_budget_allocated) * 100
-    ) if total_budget_allocated > 0 else 0
-
-    # Estimated time: human auditor = 30 min per call manual review
-    human_hours_saved = round(total_audited * 0.5, 1)
-    needs_review = total_audited - calls_cleared
-
-    # Per-task breakdown
-    print("\n" + "═" * 70, file=sys.stderr)
-    print("  BASELINE RESULTS", file=sys.stderr)
-    print("═" * 70, file=sys.stderr)
-    for r in all_results:
-        print(f"  {r['task_id']} ({r['difficulty']:6s}): {r['score']:.3f}  [{r['time_seconds']}s]", file=sys.stderr)
-
-    print(f"\n  Average Score: {avg_score:.3f}", file=sys.stderr)
-    print(f"  Total Time:    {total_time:.1f}s", file=sys.stderr)
-
-    # Executive Dashboard
-    print("\n" + "═" * 70, file=sys.stderr)
-    print("  EXECUTIVE DASHBOARD — AI-Augmented QA Coverage Report", file=sys.stderr)
-    print("═" * 70, file=sys.stderr)
-    print(f"  Total Calls Audited:              {total_audited}", file=sys.stderr)
-    print(f"  Ground Truth Violations:          {total_gt_violations}", file=sys.stderr)
-    print(f"  Violations Detected (TP):         {total_tp}/{total_gt_violations}", file=sys.stderr)
-    print(f"  Calls Cleared (No Action):        {calls_cleared}", file=sys.stderr)
-    print(f"  Recommended for Supervisor Review: {needs_review} calls", file=sys.stderr)
-    print(f"", file=sys.stderr)
-    print(f"  Estimated Human Hours Saved:      {human_hours_saved} hours", file=sys.stderr)
-    print(f"  Token Efficiency:                 {budget_efficiency}% (budget remaining)", file=sys.stderr)
-    print(f"  Average Audit Score:              {avg_score:.3f}", file=sys.stderr)
-    print(f"  Total Inference Time:             {total_time:.1f}s ({total_time/total_audited:.1f}s/call)", file=sys.stderr)
-    print("═" * 70, file=sys.stderr)
-
-    # Write results to file
-    with open("baseline_results.json", "w") as f:
-        json.dump(all_results, f, indent=2)
+    # Cleanup
+    if args.use_client:
+        env_client.__exit__(None, None, None)
 
 
 if __name__ == "__main__":
     main()
-

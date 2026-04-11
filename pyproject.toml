@@ -4,10 +4,26 @@ build-backend = "hatchling.build"
 
 [project]
 name = "regtriage-openenv"
-version = "1.1.0"
-description = "OpenEnv environment for financial services regulatory compliance auditing"
+version = "2.0.1"
+description = "OpenEnv environment for financial services regulatory compliance auditing and revenue leakage detection"
 readme = "README.md"
 requires-python = ">=3.11"
+license = {file = "LICENSE"}
+keywords = ["openenv", "reinforcement-learning", "compliance", "regulatory", "call-center"]
+authors = [
+    {name = "Rituraj", email = "inboxtorituraj@gmail.com"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
 dependencies = [
     "pydantic>=2.0",
     "openai>=1.0",
@@ -17,19 +33,45 @@ dependencies = [
     "openenv-core>=0.2.0",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "black>=24.0",
+    "ruff>=0.3.0",
+]
+train = [
+    "trl>=0.9.0",
+    "torch>=2.0.0",
+    "transformers>=4.40.0",
+]
+
 [project.urls]
-"Homepage" = "https://huggingface.co/spaces/ree2raz/RegTriage-OpenEnv"
+Homepage = "https://huggingface.co/spaces/ree2raz/RegTriage-OpenEnv"
+Repository = "https://github.com/ree2raz/reg-triage-openenv"
+Documentation = "https://github.com/ree2raz/reg-triage-openenv#readme"
 
 [project.scripts]
-server = "server.app:main"
+server = "regtriage_openenv.server.app:main"
+demo = "demo:main"
+train = "train_skeleton:main"
 
-[tool.uv]
-package = false
+[tool.hatch.build.targets.wheel]
+packages = ["regtriage_openenv"]
+
+[tool.hatch.build]
+include = [
+    "regtriage_openenv/**/*.py",
+    "transcripts.json",
+    "openenv.yaml",
+    "README.md",
+    "LICENSE",
+]
 
 [tool.openenv]
-env_class = "env:CallQAEnv"
-action_class = "env:AuditAction"
-observation_class = "env:AuditObservation"
+env_class = "regtriage_openenv.environment:CallQAEnv"
+action_class = "regtriage_openenv.models:AuditAction"
+observation_class = "regtriage_openenv.models:AuditObservation"
+client_class = "regtriage_openenv.client:RegTriageEnv"
 
 [dependency-groups]
 dev = [

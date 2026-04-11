@@ -1,6 +1,6 @@
 # OpenEnv Environment Manifest
 name: regtriage
-version: "2.0.0"
+version: "2.0.1"
 description: >
   An OpenEnv environment for training RL agents on financial services regulatory
   compliance auditing and revenue leakage detection. The agent acts as an automated

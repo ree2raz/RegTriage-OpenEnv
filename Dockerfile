@@ -9,29 +9,24 @@ WORKDIR /app
 
 # Copy dependency files first (maximizes Docker layer caching)
 COPY pyproject.toml uv.lock ./
+COPY transcripts.json ./
+COPY openenv.yaml ./
+COPY LICENSE ./
+COPY README.md ./
 
-# Install dependencies from lockfile — frozen ensures no re-resolution
-RUN uv sync --frozen --no-dev --no-editable
+# Copy package source
+COPY regtriage_openenv/ ./regtriage_openenv/
 
-# Copy application code
-COPY env.py .
-COPY models.py .
-COPY grading.py .
-COPY environment.py .
-COPY redact.py .
-COPY transcripts.json .
-COPY openenv.yaml .
-COPY server/ server/
+# Install dependencies and package
+RUN uv pip install -e . --system
 
 # Make everything accessible to the HF user
 RUN chown -R user:user /app
 
 USER user
 
-# Put venv on PATH so we don't need uv at runtime
-ENV PATH="/app/.venv/bin:$PATH"
-
 # HuggingFace Spaces expects port 7860
 EXPOSE 7860
 
-CMD ["python", "-m", "uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "7860"]
+# Run the OpenEnv server
+CMD ["python", "-m", "uvicorn", "regtriage_openenv.server.app:app", "--host", "0.0.0.0", "--port", "7860"]

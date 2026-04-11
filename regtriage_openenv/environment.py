@@ -27,9 +27,9 @@ import json
 import re
 from typing import Optional, Any
 
-from models import AuditAction, AuditObservation, AuditState, StepResult
-from grading import grade_report
-from redact import redact_pii
+from .models import AuditAction, AuditObservation, AuditState, StepResult
+from .grading import grade_report
+from .redact import redact_pii
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -250,7 +250,13 @@ class CallQAEnv:
 
     CHUNK_MAX_TURNS = 5  # max turns per read_transcript_chunk call
 
-    def __init__(self, transcript_path: str = "transcripts.json"):
+    def __init__(self, transcript_path: str = None):
+        if transcript_path is None:
+            # Try to find transcripts.json relative to package
+            import os
+            transcript_path = os.path.join(os.path.dirname(__file__), "..", "transcripts.json")
+            if not os.path.exists(transcript_path):
+                transcript_path = "transcripts.json"
         with open(transcript_path) as f:
             all_transcripts = json.load(f)
         self.transcripts = {t["id"]: t for t in all_transcripts}
@@ -707,3 +713,16 @@ class CallQAEnv:
             {"task_id": tid, "difficulty": t["difficulty"]}
             for tid, t in self.transcripts.items()
         ]
+    
+    def close(self):
+        """Close the environment. Required for OpenEnv compatibility."""
+        # No resources to clean up in this implementation
+        pass
+    
+    def get_metadata(self) -> dict:
+        """Get environment metadata. Required for OpenEnv compatibility."""
+        return {
+            "name": "regtriage",
+            "description": "Financial services regulatory compliance auditing environment",
+            "version": "2.0.1",
+        }
