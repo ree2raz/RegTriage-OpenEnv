@@ -60,16 +60,16 @@ client = OpenAI(api_key=HF_TOKEN, base_url=API_BASE_URL)
 # Run ALL 12 tasks — demonstrates confidence and exercises full task suite
 TASKS_TO_RUN = [
     {"task_id": "call_001", "difficulty": "easy"},
-    {"task_id": "call_002", "difficulty": "easy"},
+    {"task_id": "call_002", "difficulty": "hard"},     # Changed: compliant = must prove negative
     {"task_id": "call_003", "difficulty": "easy"},
-    {"task_id": "call_004", "difficulty": "easy"},
+    {"task_id": "call_004", "difficulty": "hard"},     # Changed: compliant = must prove negative
     {"task_id": "call_005", "difficulty": "medium"},
     {"task_id": "call_006", "difficulty": "medium"},
     {"task_id": "call_007", "difficulty": "medium"},
     {"task_id": "call_008", "difficulty": "medium"},
     {"task_id": "call_009", "difficulty": "hard"},
     {"task_id": "call_010", "difficulty": "hard"},
-    {"task_id": "call_011", "difficulty": "hard"},
+    {"task_id": "call_011", "difficulty": "medium"},   # Changed: obvious violations
     {"task_id": "call_012", "difficulty": "hard"},
 ]
 

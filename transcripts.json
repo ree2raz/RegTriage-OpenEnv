@@ -85,7 +85,7 @@
   },
   {
     "id": "call_002",
-    "difficulty": "easy",
+    "difficulty": "hard",
     "metadata": {
       "call_duration_seconds": 180,
       "department": "Account Services",
@@ -308,7 +308,7 @@
   },
   {
     "id": "call_004",
-    "difficulty": "easy",
+    "difficulty": "hard",
     "metadata": {
       "call_duration_seconds": 122,
       "department": "Billing",
@@ -1513,7 +1513,7 @@
   },
   {
     "id": "call_011",
-    "difficulty": "hard",
+    "difficulty": "medium",
     "metadata": {
       "call_duration_seconds": 382,
       "department": "Loan Services",
