@@ -16,7 +16,7 @@ Contract:
 """
 
 import pytest
-from redact import redact_pii
+from regtriage_openenv.redact import redact_pii
 
 
 # ══════════════════════════════════════════════════════════════════
