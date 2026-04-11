@@ -726,3 +726,13 @@ class CallQAEnv:
             "description": "Financial services regulatory compliance auditing environment",
             "version": "2.0.1",
         }
+    
+    async def reset_async(self, task_id: Optional[str] = None, **kwargs) -> AuditObservation:
+        """Async version of reset. Required for OpenEnv HTTP server compatibility."""
+        return self.reset(task_id)
+    
+    async def step_async(self, action: AuditAction, **kwargs) -> AuditObservation:
+        """Async version of step. Required for OpenEnv HTTP server compatibility."""
+        result = self.step(action)
+        # Return the observation part (OpenEnv server expects Observation, not StepResult)
+        return result.observation
