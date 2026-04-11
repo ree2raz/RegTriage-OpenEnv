@@ -1,5 +1,7 @@
 FROM python:3.11-slim
 
+# Build: 2025-04-11-02 (force rebuild for async methods)
+
 # Install uv from official image
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
