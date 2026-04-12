@@ -309,6 +309,14 @@ def grade_report(
 
     total = max(0.0, min(1.0, raw_total))
 
+    # Clamp to strictly (0, 1) — validation rejects exactly 0.0 or 1.0
+    # Scores of 0.0 happen when compliance verdict is wrong AND no violations detected
+    # Scores of 1.0 happen on trivially clean calls (no GT violations, no flags)
+    if total == 1.0:
+        total = 0.999
+    elif total == 0.0:
+        total = 0.001
+
     # ── Build structured compliance summary ──────────
     flagged_types = [v["type"] for v in flagged_violations]
     gt_remaining = [v["type"] for v in gt_violations]
