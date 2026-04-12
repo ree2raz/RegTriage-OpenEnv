@@ -2,3 +2,9 @@
 .env.local
 .venv
 *__pycache__*
+
+# Local test scripts (not for repo)
+test_ws.py
+
+# Research/analysis files
+.research/
