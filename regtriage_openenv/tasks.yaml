@@ -1,0 +1,40 @@
+# Task definitions for RegTriage OpenEnv environment
+# This file contains the task metadata; tasks are loaded from transcripts.json
+
+tasks:
+  - id: call_001
+    difficulty: easy
+    description: "Balance inquiry — regulatory disclosure failure"
+  - id: call_002
+    difficulty: easy
+    description: "Account status check — fully compliant call (no violations)"
+  - id: call_003
+    difficulty: easy
+    description: "Statement question — PII exposure risk (full SSN request)"
+  - id: call_004
+    difficulty: easy
+    description: "Payment confirmation — fully compliant call (no violations)"
+  - id: call_005
+    difficulty: medium
+    description: "Billing dispute — failed escalation and unauthorized commitment"
+  - id: call_006
+    difficulty: medium
+    description: "Refinance threat — churn save policy breach (Hero Agent) and hold violation"
+  - id: call_007
+    difficulty: medium
+    description: "Add authorized user — PII exposure and regulatory disclosure failure"
+  - id: call_008
+    difficulty: medium
+    description: "Mortgage modification — unauthorized rate guarantee and hold violation"
+  - id: call_009
+    difficulty: hard
+    description: "Multiple billing discrepancies — disclosure failure, failed escalation, unauthorized reversal"
+  - id: call_010
+    difficulty: hard
+    description: "Collections (Hero Agent) — churn save breach, PII exposure, failed escalation, hold violation"
+  - id: call_011
+    difficulty: hard
+    description: "Auto loan refinance — disclosure failure, unauthorized rate lock, unnecessary PII"
+  - id: call_012
+    difficulty: hard
+    description: "Collections follow-up — churn save breach, failed escalation, disclosure failure"

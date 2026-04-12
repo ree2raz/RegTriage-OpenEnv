@@ -6,7 +6,7 @@ Two ways to use this package:
    from regtriage_openenv import CallQAEnv
    from regtriage_openenv.models import AuditAction
    env = CallQAEnv()
-   obs = env.reset("call_001")
+   obs = env.reset(task_id="call_001")
 
 2. **OpenEnv** (deployment path — needs openenv-core):
    from regtriage_openenv.client import RegTriageEnv
@@ -14,7 +14,7 @@ Two ways to use this package:
    client = RegTriageEnv.from_docker_image("regtriage:2.0.1")
    # or
    client = RegTriageEnv(base_url="https://ree2raz-regtriage-openenv.hf.space")
-   client.reset("call_001")
+   client.reset(task_id="call_001")
    client.step(AuditAction(action_type="get_call_metadata"))
 
 OpenEnv-compatible environment for training RL agents to audit financial
@@ -26,7 +26,6 @@ from regtriage_openenv.models import (
     AuditAction,
     AuditObservation,
     AuditState,
-    StepResult,
 )
 
 __version__ = "2.0.1"
@@ -36,5 +35,4 @@ __all__ = [
     "AuditAction",
     "AuditObservation",
     "AuditState",
-    "StepResult",
 ]

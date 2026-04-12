@@ -3,8 +3,8 @@ environment.py — CallQAEnv: the core OpenEnv environment implementation.
 
 Implements the OpenEnv API contract:
     reset(task_id)  → AuditObservation
-    step(action)    → StepResult
-    state()         → AuditState
+    step(action)    → AuditObservation
+    state           → AuditState (property)
 
 The agent plays the role of a QA supervisor auditing call transcripts
 for compliance violations using 6 strategic tools.
@@ -27,14 +27,15 @@ import json
 import re
 from typing import Optional, Any
 
-from .models import AuditAction, AuditObservation, AuditState, StepResult
+from openenv.core.env_server.interfaces import Environment
+from .models import AuditAction, AuditObservation, AuditState
 from .grading import grade_report
 from .redact import redact_pii
 
 
-# ══════════════════════════════════════════════════════════════════
+# ╭───────────────────────────────────────────────────────────────────────────────╮
 # Compliance Rubric — policy definitions for analyze_turn
-# ══════════════════════════════════════════════════════════════════
+# ╰───────────────────────────────────────────────────────────────────────────────╯
 # In a production system, these would be loaded from a configurable
 # rules engine or policy database. Hardcoded here for MVP scope,
 # with a clean data structure that is obviously replaceable.
@@ -214,9 +215,9 @@ COMPLIANCE_RUBRIC = {
 }
 
 
-# ══════════════════════════════════════════════════════════════════
+# ╭───────────────────────────────────────────────────────────────────────────────╮
 # Action Costs — weighted by real-world resource usage
-# ══════════════════════════════════════════════════════════════════
+# ╰───────────────────────────────────────────────────────────────────────────────╯
 
 ACTION_COSTS = {
     "get_call_metadata": 5,       # Quick DB lookup, small payload
@@ -231,7 +232,7 @@ ACTION_COSTS = {
 MIN_MEANINGFUL_COST = 5
 
 
-class CallQAEnv:
+class CallQAEnv(Environment[AuditAction, AuditObservation, AuditState]):
     """
     RegTriage — Financial Services Compliance Auditing Environment.
 
@@ -248,11 +249,23 @@ class CallQAEnv:
     violations. See grading.py for the complete scoring specification.
     """
 
+    SUPPORTS_CONCURRENT_SESSIONS: bool = True
     CHUNK_MAX_TURNS = 5  # max turns per read_transcript_chunk call
 
     def __init__(self, transcript_path: str = None):
+        """Initialize the environment.
+        
+        Args:
+            transcript_path: Path to transcripts.json. If None, uses package-relative path.
+        """
+        self.transcript_path = transcript_path
+        self._load_transcripts()
+        self._reset_state()
+
+    def _load_transcripts(self):
+        """Load transcripts from JSON file."""
+        transcript_path = self.transcript_path
         if transcript_path is None:
-            # Try to find transcripts.json relative to package
             import os
             transcript_path = os.path.join(os.path.dirname(__file__), "..", "transcripts.json")
             if not os.path.exists(transcript_path):
@@ -260,7 +273,6 @@ class CallQAEnv:
         with open(transcript_path) as f:
             all_transcripts = json.load(f)
         self.transcripts = {t["id"]: t for t in all_transcripts}
-        self._reset_state()
 
     def _reset_state(self):
         """Clear all episode state."""
@@ -346,17 +358,20 @@ class CallQAEnv:
 
         return ACTION_COSTS.get(action.action_type, MIN_MEANINGFUL_COST)
 
-    # ── OpenEnv API ───────────────────────────────────────────
+    # ── OpenEnv API ──────────────────────────────────────────
 
-    def reset(self, task_id: Optional[str] = None) -> AuditObservation:
+    def reset(self, seed: int = None, episode_id: str = None, **kwargs) -> AuditObservation:
         """Load a specific transcript and reset all state.
 
         Args:
-            task_id: Transcript ID (e.g., "call_001"). Defaults to first available.
+            seed: Random seed (not used in this deterministic environment).
+            episode_id: Episode identifier (used as task_id).
+            **kwargs: Additional arguments including 'task_id' for transcript selection.
 
         Returns:
             Initial observation with call summary and empty checklist.
         """
+        task_id = kwargs.get("task_id", episode_id)
         if task_id is None:
             task_id = list(self.transcripts.keys())[0]
         if task_id not in self.transcripts:
@@ -378,11 +393,13 @@ class CallQAEnv:
                 f"Compute budget: {self.total_budget} units"
             ),
             checklist=self._build_checklist(),
-            system_feedback="Environment reset. Use get_call_metadata to begin your audit."
+            system_feedback="Environment reset. Use get_call_metadata to begin your audit.",
+            done=False,
+            reward=0.0
         )
 
-    def step(self, action: AuditAction) -> StepResult:
-        """Process one agent action, return StepResult.
+    def step(self, action: AuditAction) -> AuditObservation:
+        """Process one agent action, return observation.
 
         Dispatches to the appropriate tool, applies budget enforcement,
         and accumulates rewards.
@@ -391,19 +408,28 @@ class CallQAEnv:
         - submit_report always costs 0 and is always allowed
         - If budget would go negative, auto-submit with penalty
         - Budget warning when only flag/submit remain affordable
+
+        Returns:
+            AuditObservation with result, checklist, system_feedback, done, reward
         """
         if self.done:
-            return StepResult(
-                observation=AuditObservation(system_feedback="Episode already finished."),
-                reward=0.0, done=True, info={}
+            return AuditObservation(
+                result="Episode already finished.",
+                checklist=self._build_checklist(),
+                system_feedback="Episode already finished.",
+                done=True,
+                reward=0.0
             )
         if self.current is None:
-            return StepResult(
-                observation=AuditObservation(system_feedback="Call reset() with a task_id first."),
-                reward=0.0, done=True, info={}
+            return AuditObservation(
+                result="Call reset() with a task_id first.",
+                checklist={},
+                system_feedback="Call reset() with a task_id first.",
+                done=True,
+                reward=0.0
             )
 
-        # ── Budget check before execution ─────────────────
+        # ── Budget check before execution ─────────────────────────────
         action_cost = self._get_action_cost(action)
 
         # submit_report is always free and always allowed
@@ -417,27 +443,26 @@ class CallQAEnv:
             reward -= 0.10  # budget exhaustion penalty
             self.cumulative_reward += reward
 
-            obs = AuditObservation(
+            return AuditObservation(
                 result=result,
                 checklist=self._build_checklist(),
                 system_feedback=(
                     f"Budget exhausted ({self.budget_remaining} remaining, "
                     f"action costs {action_cost}). Auto-submitting with penalty."
-                )
+                ),
+                done=True,
+                reward=reward
             )
-            return StepResult(observation=obs, reward=reward, done=True,
-                              info={"step": self.step_count, "auto_submit": True,
-                                    "cumulative_reward": self.cumulative_reward})
 
-        # ── Deduct budget and execute ─────────────────────
+        # ── Deduct budget and execute ────────────────────────────────────
         self.budget_remaining -= action_cost
         self.step_count += 1
         self.actions_taken.append(action.action_type)
 
-        # ── Tool dispatch ─────────────────────────────────
+        # ── Tool dispatch ──────────────────────────────────────────
         result, reward, feedback = self._dispatch(action)
 
-        # ── Budget warning ────────────────────────────────
+        # ── Budget warning ───────────────────────────────────────────
         if not self.done and self.budget_remaining < MIN_MEANINGFUL_COST:
             if self.budget_remaining >= ACTION_COSTS["flag_violation"]:
                 feedback += " ⚠ Budget critically low. Only flagging and submission remain affordable."
@@ -446,22 +471,17 @@ class CallQAEnv:
 
         self.cumulative_reward += reward
 
-        obs = AuditObservation(
+        return AuditObservation(
             result=result,
             checklist=self._build_checklist(),
-            system_feedback=feedback
-        )
-
-        return StepResult(
-            observation=obs,
-            reward=reward,
+            system_feedback=feedback,
             done=self.done,
-            info={"step": self.step_count, "budget_used": action_cost,
-                  "cumulative_reward": self.cumulative_reward}
+            reward=reward
         )
 
+    @property
     def state(self) -> AuditState:
-        """Return full observable episode state."""
+        """Return full observable episode state (OpenEnv property requirement)."""
         return AuditState(
             episode_id=self.current["id"] if self.current else "",
             difficulty=self.current["difficulty"] if self.current else "",
@@ -474,7 +494,12 @@ class CallQAEnv:
             cumulative_reward=self.cumulative_reward,
         )
 
-    # ── Tool Dispatch ─────────────────────────────────────────
+    def close(self) -> None:
+        """Close the environment. Required for OpenEnv compatibility."""
+        # No resources to clean up in this implementation
+        pass
+
+    # ── Tool Dispatch ────────────────────────────────────────────
 
     def _dispatch(self, action: AuditAction) -> tuple[Any, float, str]:
         """Route action to the correct tool. Returns (result, reward, feedback)."""
@@ -512,7 +537,7 @@ class CallQAEnv:
         else:
             return None, -0.05, f"Unknown action_type: {tool}"
 
-    # ── Tool Implementations ──────────────────────────────────
+    # ── Tool Implementations ────────────────────────────────────────
 
     def _tool_get_call_metadata(self) -> dict:
         """Return call metadata WITHOUT transcript content.
@@ -592,7 +617,7 @@ class CallQAEnv:
         turn = turns[turn_index]
         total = len(turns)
 
-        # ── Build context window (N-1, N, N+1) ───────────
+        # ── Build context window (N-1, N, N+1) ──────────────────
         context_before = None
         context_after = None
 
@@ -614,13 +639,13 @@ class CallQAEnv:
                 "timestamp_start": nxt["timestamp_start"],
             }
 
-        # ── Temporal signals ──────────────────────────────
+        # ── Temporal signals ──────────────────────────────────────
         silence_before = 0.0
         if turn_index > 0:
             prev_end = turns[turn_index - 1]["timestamp_end"]
             silence_before = round(turn["timestamp_start"] - prev_end, 1)
 
-        # ── Position awareness ────────────────────────────
+        # ── Position awareness ──────────────────────────────────
         if turn_index <= 2:
             position = "opening"
         elif turn_index >= total - 3:
@@ -640,7 +665,7 @@ class CallQAEnv:
             "speaker_turn_position": position,
         }
 
-        # ── Policy rubric lookup ──────────────────────────
+        # ── Policy rubric lookup ────────────────────────────
         if policy_hypothesis:
             rubric = COMPLIANCE_RUBRIC.get(policy_hypothesis)
             if rubric:
@@ -713,26 +738,3 @@ class CallQAEnv:
             {"task_id": tid, "difficulty": t["difficulty"]}
             for tid, t in self.transcripts.items()
         ]
-    
-    def close(self):
-        """Close the environment. Required for OpenEnv compatibility."""
-        # No resources to clean up in this implementation
-        pass
-    
-    def get_metadata(self) -> dict:
-        """Get environment metadata. Required for OpenEnv compatibility."""
-        return {
-            "name": "regtriage",
-            "description": "Financial services regulatory compliance auditing environment",
-            "version": "2.0.1",
-        }
-    
-    async def reset_async(self, task_id: Optional[str] = None, **kwargs) -> AuditObservation:
-        """Async version of reset. Required for OpenEnv HTTP server compatibility."""
-        return self.reset(task_id)
-    
-    async def step_async(self, action: AuditAction, **kwargs) -> AuditObservation:
-        """Async version of step. Required for OpenEnv HTTP server compatibility."""
-        result = self.step(action)
-        # Return the observation part (OpenEnv server expects Observation, not StepResult)
-        return result.observation

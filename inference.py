@@ -4,10 +4,6 @@ inference.py — Baseline inference script for RegTriage OpenEnv environment.
 Runs an LLM agent against the environment using the OpenAI-compatible API.
 The agent uses function calling (tool use) to strategically audit call transcripts.
 
-Two modes:
-1. Local mode (default): Uses local CallQAEnv directly
-2. Client mode (--use-client): Connects via RegTriageEnv client to running server
-
 Required environment variables (per hackathon spec):
   API_BASE_URL    — API endpoint (default provided)
   MODEL_NAME      — Model identifier (default provided)
@@ -19,11 +15,7 @@ STDOUT FORMAT (per hackathon spec):
   [END]   success=<true|false> steps=<n> score=<0.000> rewards=<r1,r2,...,rn>
 
 Usage:
-  # Local mode (recommended)
   uv run python inference.py
-  
-  # Client mode (connect to running server)
-  uv run python inference.py --use-client --env-url http://localhost:7860
 """
 
 import argparse
@@ -85,14 +77,16 @@ class LocalEnvWrapper:
         self.step_count = 0
     
     def reset(self, task_id: str):
-        obs = self.env.reset(task_id)
+        # reset() now accepts task_id via kwargs
+        obs = self.env.reset(task_id=task_id)
         self.step_count = 0
         return obs
     
     def step(self, action: AuditAction):
-        result = self.env.step(action)
+        # step() now returns AuditObservation directly (not StepResult)
+        obs = self.env.step(action)
         self.step_count = self.env.step_count
-        return result
+        return obs
     
     @property
     def done(self):
@@ -297,102 +291,97 @@ You have a compute budget for each audit. Each action costs compute units:
 - read_transcript_chunk: 3 units PER TURN requested (reading 5 turns = 15 units)
 - analyze_turn: 10 units (includes context window + optional policy rubric)
 - flag_violation: 2 units (cheap — flag freely)
-- submit_report: 0 units (always allowed)
+- submit_report: 0 units (always allowed, terminates the episode)
 
-Your budget remaining is shown as a percentage after each step. Be efficient:
-use metadata and sentiment to triage, then read only the sections that matter.
+Budget is dynamically calculated per transcript. If you run out of budget, the system auto-submits with a penalty.
 
-## Your Audit Workflow
-1. **Start with metadata** — call get_call_metadata() to understand the call context.
-2. **Check sentiment** — call get_sentiment_timeline() to identify emotional hotspots.
-3. **Read the opening** — read the first 2-3 turns to check for the mandatory recording disclaimer.
-4. **Read around hotspots** — read turns around any sentiment shifts to check escalation handling.
-5. **Check PII handling** — look for moments where identity verification occurs.
-6. **Analyze suspicious turns** — use analyze_turn() with a policy_hypothesis to get the
-   compliance rubric and cross-reference the utterance against the standard.
-7. **Flag ALL violations** — for each violation found, flag it with type, turn index, and severity.
-8. **Submit report** — when done, submit your final compliance verdict.
+## Six Violation Types to Detect
 
-## Compliance Rules — Taxonomy of Risk (CHECK ALL)
-### Legal Liability Violations
-- **Regulatory Disclosure Failure (ALWAYS high severity)**: Every call MUST begin with a statement
-  that the call may be recorded for quality assurance and/or training purposes. In debt
-  collection calls, Mini-Miranda rights disclosure is also required.
-  The disclaimer must occur within the agent's first speaking turn.
-  Absence constitutes a regulatory violation with immediate legal liability.
-- **Failed Escalation (ALWAYS high severity)**: When customer sentiment reaches "angry", agent
-  MUST offer to transfer to a supervisor. Deflection = flag as failed_escalation.
-- **PII Exposure Risk (high-medium severity)**: Agents must follow data minimization. Asking for
-  FULL SSN when only last 4 needed, or reading back full account numbers aloud = flag as
-  pii_exposure_risk.
+1. REGULATORY_DISCLOSURE_FAILURE (HIGH severity)
+   Every call MUST begin with: "This call may be recorded for quality assurance..."
+   Missing or buried disclaimers are HIGH violations — legal/regulatory requirement.
 
-### Revenue Leakage Violations
-- **Unauthorized Commitment (high-medium severity)**: Agents CANNOT promise specific refunds,
-  interest rates, outcomes without supervisor approval. Creates binding verbal contracts.
-  Flag as unauthorized_commitment.
-- **Churn Save Policy Breach (high-medium severity)**: Agents CANNOT invent discounts, credits,
-  or retention offers not pre-approved by CRM system. Even if customer is threatening to leave,
-  the agent cannot improvise financial concessions. Flag as churn_save_policy_breach.
+2. FAILED_ESCALATION (HIGH severity)
+   When a customer is angry OR explicitly requests a supervisor, the agent MUST offer transfer.
+   Deflection like "a supervisor would tell you the same thing" is a failed escalation.
 
-### Operational Violations
-- **Incorrect Hold Procedure (medium-low severity)**: Before placing customer on hold, agent MUST
-  ask permission. Going silent without warning = flag as incorrect_hold_procedure.
+3. UNAUTHORIZED_COMMITMENT (HIGH if >$500, else MEDIUM)
+   Agent promises specific financial outcomes without documented approval.
+   Look for: "I guarantee", "definitely will happen", exact dollar amounts without hedging.
+   
+4. INCORRECT_HOLD_PROCEDURE (MEDIUM)
+   Before placing on hold, agent MUST: explain why, ask permission, provide wait time estimate.
+   Unexplained silence gaps or "hold on one sec" without permission are violations.
 
-## CRITICAL RULES
-- Missing a high-severity violation severely reduces the score. Be thorough.
-- A happy customer does NOT mean a compliant call. Watch for the 'Hero Agent' who breaks rules
-  to make the customer happy.
-- Flag ALL violations — not just the obvious ones.
-- Set compliance_pass to false if ANY violations exist, true ONLY if the call is fully clean.
-- Some calls may be fully compliant — do not flag violations that don't exist.
-- Use analyze_turn with policy_hypothesis to get the compliance rubric when unsure.
-- Be efficient with your budget — precision, not brute force.
+5. PII_EXPOSURE_RISK (HIGH if full SSN, else MEDIUM)
+   Agent requests more PII than necessary. Full SSN when last-4 would suffice is HIGH.
+   Reading full account numbers aloud is MEDIUM.
+
+6. CHURN_SAVE_POLICY_BREACH (HIGH if >$200, else MEDIUM)
+   Agent invents unauthorized retention offers: discounts, credits, rate reductions not in CRM.
+   Key: giving away company money to prevent churn without system approval.
+
+## Audit Strategy
+
+1. START: get_call_metadata to triage (check department, duration, reason)
+2. TRIAGE: get_sentiment_timeline to identify hotspots (where did sentiment shift?)
+3. TARGET: read_transcript_chunk strategically around hotspots or at the opening
+4. ANALYZE: analyze_turn with policy_hypothesis for suspected violations
+5. FLAG: flag_violation for each violation you confirm (severity matters for scoring)
+6. SUBMIT: submit_report with compliance_pass=true ONLY if zero violations found
+
+## Scoring
+Your grade is computed from:
+- 20%: Correct compliance verdict (did you say pass when it should fail or vice versa?)
+- 60%: Severity-weighted F1 on violation detection (high=3x, medium=2x, low=1x)
+- 20%: Efficiency bonus (budget remaining at submission)
+
+AUTO-FAIL: If ALL HIGH violations are missed, score is capped at 0.30.
+
+Flag violations liberally — false positives have small penalties (-0.03 to -0.10), but missing violations is costly.
 """
 
+
 # ══════════════════════════════════════════════════════════════════
-# Agent Loop
+# Tool Call Translation
 # ══════════════════════════════════════════════════════════════════
 
-
-def tool_call_to_action(tool_name: str, arguments: dict) -> AuditAction:
-    """Convert an OpenAI tool call into an AuditAction."""
+def tool_call_to_action(fn_name: str, fn_args: dict) -> AuditAction:
+    """Convert an OpenAI tool call to an AuditAction."""
     return AuditAction(
-        action_type=tool_name,
-        turn_index=arguments.get("turn_index"),
-        start_turn=arguments.get("start_turn"),
-        end_turn=arguments.get("end_turn"),
-        violation_type=arguments.get("violation_type"),
-        violation_severity=arguments.get("violation_severity"),
-        compliance_pass=arguments.get("compliance_pass"),
-        policy_hypothesis=arguments.get("policy_hypothesis"),
+        action_type=fn_name,
+        turn_index=fn_args.get("turn_index"),
+        start_turn=fn_args.get("start_turn"),
+        end_turn=fn_args.get("end_turn"),
+        violation_type=fn_args.get("violation_type"),
+        violation_severity=fn_args.get("violation_severity"),
+        compliance_pass=fn_args.get("compliance_pass"),
+        policy_hypothesis=fn_args.get("policy_hypothesis"),
     )
 
 
-def run_agent_episode(env: LocalEnvWrapper, task_id: str) -> tuple[dict | None, list[float]]:
-    """
-    Run one complete episode: reset env, let LLM make tool calls until done.
-    Returns (final_result_dict, list_of_rewards).
-    """
-    obs = env.reset(task_id)
+# ══════════════════════════════════════════════════════════════════
+# Agent Episode Runner
+# ══════════════════════════════════════════════════════════════════
+
+def run_agent_episode(env: LocalEnvWrapper, task_id: str, max_steps: int = 50) -> tuple[Union[dict, str], list[float]]:
+    """Run one episode: reset, agent loop, submit, return result."""
     log_start(task=task_id, env=BENCHMARK, model=MODEL_NAME)
 
+    obs = env.reset(task_id)
+    rewards: list[float] = []
+    last_result = obs.result
+
+    # Initial observation message for the agent
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
-        {
-            "role": "user",
-            "content": (
-                f"Audit this call. {obs.system_feedback}\n"
-                f"Call info: {obs.result}\n"
-                "Begin your audit by calling get_call_metadata()."
-            ),
-        },
+        {"role": "user", "content": (
+            f"You are auditing call transcript {task_id}. "
+            f"Use get_call_metadata to begin your investigation."
+        )},
     ]
 
-    last_result = None
-    rewards: list[float] = []
-    max_iterations = 30  # safety margin (budget handles episode length)
-
-    for iteration in range(max_iterations):
+    for _ in range(max_steps):
         try:
             response = client.chat.completions.create(
                 model=MODEL_NAME,
@@ -405,16 +394,16 @@ def run_agent_episode(env: LocalEnvWrapper, task_id: str) -> tuple[dict | None, 
         except Exception as e:
             # On API error, submit what we have and end gracefully
             action = AuditAction(action_type="submit_report", compliance_pass=False)
-            step_result = env.step(action)
-            rewards.append(step_result.reward)
+            obs = env.step(action)
+            rewards.append(obs.reward)
             log_step(
                 step=env.step_count,
                 action="submit_report(compliance_pass=false)",
-                reward=step_result.reward,
-                done=step_result.done,
+                reward=obs.reward,
+                done=obs.done,
                 error=str(e),
             )
-            return step_result.observation.result, rewards
+            return obs.result, rewards
 
         choice = response.choices[0]
         message = choice.message
@@ -432,24 +421,24 @@ def run_agent_episode(env: LocalEnvWrapper, task_id: str) -> tuple[dict | None, 
                     fn_args = {}
 
                 action = tool_call_to_action(fn_name, fn_args)
-                step_result = env.step(action)
+                obs = env.step(action)
 
                 # Format action string for logging
                 args_str = ",".join(f"{k}={v}" for k, v in fn_args.items()) if fn_args else ""
                 action_str = f"{fn_name}({args_str})"
 
-                rewards.append(step_result.reward)
+                rewards.append(obs.reward)
 
                 # Determine if there's an error in the result
                 error = None
-                if isinstance(step_result.observation.result, dict) and "error" in step_result.observation.result:
-                    error = step_result.observation.result["error"]
+                if isinstance(obs.result, dict) and "error" in obs.result:
+                    error = obs.result["error"]
 
                 log_step(
                     step=env.step_count,
                     action=action_str,
-                    reward=step_result.reward,
-                    done=step_result.done,
+                    reward=obs.reward,
+                    done=obs.done,
                     error=error,
                 )
 
@@ -458,15 +447,15 @@ def run_agent_episode(env: LocalEnvWrapper, task_id: str) -> tuple[dict | None, 
                     "role": "tool",
                     "tool_call_id": tool_call.id,
                     "content": json.dumps({
-                        "result": step_result.observation.result,
-                        "feedback": step_result.observation.system_feedback,
-                        "checklist": step_result.observation.checklist,
+                        "result": obs.result,
+                        "feedback": obs.system_feedback,
+                        "checklist": obs.checklist,
                     }, default=str),
                 }
                 messages.append(tool_response)
-                last_result = step_result.observation.result
+                last_result = obs.result
 
-                if step_result.done:
+                if obs.done:
                     return last_result, rewards
 
         elif message.content and not message.tool_calls:
@@ -486,16 +475,16 @@ def run_agent_episode(env: LocalEnvWrapper, task_id: str) -> tuple[dict | None, 
     # Safety: force submission if somehow we exit without done
     if not env.done:
         action = AuditAction(action_type="submit_report", compliance_pass=False)
-        step_result = env.step(action)
-        rewards.append(step_result.reward)
+        obs = env.step(action)
+        rewards.append(obs.reward)
         log_step(
             step=env.step_count,
             action="submit_report(compliance_pass=false)",
-            reward=step_result.reward,
-            done=step_result.done,
+            reward=obs.reward,
+            done=obs.done,
             error=None,
         )
-        last_result = step_result.observation.result
+        last_result = obs.result
 
     return last_result, rewards
 
@@ -507,30 +496,16 @@ def run_agent_episode(env: LocalEnvWrapper, task_id: str) -> tuple[dict | None, 
 def main():
     parser = argparse.ArgumentParser(description="RegTriage Baseline Inference")
     parser.add_argument(
-        "--use-client",
-        action="store_true",
-        help="Use RegTriageEnv client instead of local environment",
-    )
-    parser.add_argument(
         "--env-url",
         type=str,
-        default="http://localhost:7860",
-        help="Environment server URL (when using --use-client)",
+        default="http://localhost:8000",
+        help="Environment server URL",
     )
     
     args = parser.parse_args()
     
     # Initialize environment
-    if args.use_client:
-        from regtriage_openenv.client import RegTriageEnv
-        print(f"Connecting to environment at {args.env_url}...")
-        env_client = RegTriageEnv(base_url=args.env_url)
-        env_client.__enter__()
-        # Note: Client interface differs slightly, this is a simplified wrapper
-        env = LocalEnvWrapper()  # Fallback to local for now
-        print("Note: Using local environment (client mode implementation pending)")
-    else:
-        env = LocalEnvWrapper()
+    env = LocalEnvWrapper()
     
     all_results = []
 
@@ -598,10 +573,6 @@ def main():
             }
         }, f, indent=2)
     print(f"\nResults saved to {output_file}", file=sys.stderr)
-
-    # Cleanup
-    if args.use_client:
-        env_client.__exit__(None, None, None)
 
 
 if __name__ == "__main__":

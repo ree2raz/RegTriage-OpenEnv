@@ -10,30 +10,8 @@ from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field
 
-# ---------------------------------------------------------------------------
-# OpenEnv base types (imported from openenv-core when available, otherwise
-# we define compatible stubs so the project still runs without the package)
-# ---------------------------------------------------------------------------
-try:
-    from openenv.core.env_server.types import Action, Observation, State
-except ImportError:
-    # Fallback stubs -- keep the same field contract so the rest of the code
-    # works identically whether openenv-core is installed or not.
-    
-    class Action(BaseModel):  # type: ignore[no-redef]
-        """Base Action type for OpenEnv compatibility."""
-        metadata: Dict[str, Any] = Field(default_factory=dict)
-
-    class Observation(BaseModel):  # type: ignore[no-redef]
-        """Base Observation type for OpenEnv compatibility."""
-        done: bool = False
-        reward: Optional[float] = None
-        metadata: Dict[str, Any] = Field(default_factory=dict)
-
-    class State(BaseModel):  # type: ignore[no-redef]
-        """Base State type for OpenEnv compatibility."""
-        episode_id: Optional[str] = None
-        step_count: int = 0
+# OpenEnv base types - imported directly from openenv-core (required)
+from openenv.core.env_server.types import Action, Observation, State
 
 
 # ---------------------------------------------------------------------------
@@ -139,22 +117,6 @@ class AuditState(State):
     flagged_violations: List[Dict[str, Any]] = Field(default_factory=list, description="Violations flagged")
     done: bool = Field(default=False, description="Whether episode is complete")
     cumulative_reward: float = Field(default=0.0, description="Cumulative reward so far")
-
-
-# ---------------------------------------------------------------------------
-# Step Result
-# ---------------------------------------------------------------------------
-
-class StepResult(BaseModel):
-    """Returned by env.step() per OpenEnv contract.
-
-    Bundles the observation with scalar reward, termination signal,
-    and an auxiliary info dict for debugging/logging.
-    """
-    observation: AuditObservation = Field(..., description="Observation after step")
-    reward: float = Field(default=0.0, description="Reward for this step")
-    done: bool = Field(default=False, description="Whether episode is done")
-    info: Dict[str, Any] = Field(default_factory=dict, description="Auxiliary info")
 
 
 # ---------------------------------------------------------------------------

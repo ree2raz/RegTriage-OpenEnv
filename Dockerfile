@@ -1,34 +1,24 @@
-FROM python:3.11-slim
+ARG BASE_IMAGE=ghcr.io/meta-pytorch/openenv-base:latest
+FROM ${BASE_IMAGE} AS builder
 
-# Build: 2025-04-11-02 (force rebuild for async methods)
-
-# Install uv from official image
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
-
-# HuggingFace Spaces runs as user 1000
-RUN useradd -m -u 1000 user
 WORKDIR /app
+COPY . /app/env
+WORKDIR /app/env
 
-# Copy dependency files first (maximizes Docker layer caching)
-COPY pyproject.toml uv.lock ./
-COPY transcripts.json ./
-COPY openenv.yaml ./
-COPY LICENSE ./
-COPY README.md ./
+# Install uv and sync dependencies
+RUN pip install uv && uv sync --frozen --no-editable
 
-# Copy package source
-COPY regtriage_openenv/ ./regtriage_openenv/
+FROM ${BASE_IMAGE}
 
-# Install dependencies and package
-RUN uv pip install -e . --system
+# Copy the virtual environment and source code from builder
+COPY --from=builder /app/env/.venv /app/.venv
+COPY --from=builder /app/env /app/env
 
-# Make everything accessible to the HF user
-RUN chown -R user:user /app
+ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH="/app/env:$PYTHONPATH"
 
-USER user
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
 
-# HuggingFace Spaces expects port 7860
-EXPOSE 7860
-
-# Run the OpenEnv server
-CMD ["python", "-m", "uvicorn", "regtriage_openenv.server.app:app", "--host", "0.0.0.0", "--port", "7860"]
+# OpenEnv standard port is 8000
+CMD ["sh", "-c", "cd /app/env && uvicorn regtriage_openenv.server.app:app --host 0.0.0.0 --port 8000"]
