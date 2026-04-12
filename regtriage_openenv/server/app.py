@@ -20,15 +20,12 @@ from regtriage_openenv.models import AuditAction, AuditObservation, AuditState
 
 def create_regtriage_app():
     """Create FastAPI app using OpenEnv's create_app."""
-    # create_app expects env as a factory (callable)
-    def env_factory():
-        return CallQAEnv()
-    
     app = create_app(
-        env=env_factory,
+        env=CallQAEnv,
         action_cls=AuditAction,
         observation_cls=AuditObservation,
         env_name="regtriage",
+        max_concurrent_envs=1,
     )
     
     return app
