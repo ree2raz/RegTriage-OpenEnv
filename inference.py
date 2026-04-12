@@ -18,7 +18,6 @@ Usage:
   uv run python inference.py
 """
 
-import argparse
 import json
 import os
 import time
@@ -42,10 +41,8 @@ MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
 HF_TOKEN = os.getenv("HF_TOKEN")
 BENCHMARK = "regtriage"
 
-if not HF_TOKEN:
-    raise RuntimeError(
-        "No API key found. Set HF_TOKEN in environment or .env file."
-    )
+if HF_TOKEN is None:
+    raise ValueError("HF_TOKEN environment variable is required")
 
 client = OpenAI(api_key=HF_TOKEN, base_url=API_BASE_URL)
 
@@ -494,45 +491,36 @@ def run_agent_episode(env: LocalEnvWrapper, task_id: str, max_steps: int = 50) -
 # ══════════════════════════════════════════════════════════════════
 
 def main():
-    parser = argparse.ArgumentParser(description="RegTriage Baseline Inference")
-    parser.add_argument(
-        "--env-url",
-        type=str,
-        default="http://localhost:8000",
-        help="Environment server URL",
-    )
-    
-    args = parser.parse_args()
-    
-    # Initialize environment
     env = LocalEnvWrapper()
-    
     all_results = []
 
-    for task in TASKS_TO_RUN:
-        task_id = task["task_id"]
-        difficulty = task["difficulty"]
+    try:
+        for task in TASKS_TO_RUN:
+            task_id = task["task_id"]
+            difficulty = task["difficulty"]
 
-        start_time = time.time()
-        result, rewards = run_agent_episode(env, task_id)
-        elapsed = time.time() - start_time
+            start_time = time.time()
+            result, rewards = run_agent_episode(env, task_id)
+            elapsed = time.time() - start_time
 
-        if result and isinstance(result, dict) and "final_score" in result:
-            score = result["final_score"]
-        else:
-            score = 0.0
+            if result and isinstance(result, dict) and "final_score" in result:
+                score = result["final_score"]
+            else:
+                score = 0.0
 
-        success = score >= 0.5
-        log_end(success=success, steps=len(rewards), score=score, rewards=rewards)
+            success = score >= 0.5
+            log_end(success=success, steps=len(rewards), score=score, rewards=rewards)
 
-        all_results.append({
-            "task_id": task_id,
-            "difficulty": difficulty,
-            "score": score,
-            "time_seconds": round(elapsed, 1),
-            "breakdown": result.get("breakdown", {}) if isinstance(result, dict) else {},
-            "details": result.get("details", {}) if isinstance(result, dict) else {},
-        })
+            all_results.append({
+                "task_id": task_id,
+                "difficulty": difficulty,
+                "score": score,
+                "time_seconds": round(elapsed, 1),
+                "breakdown": result.get("breakdown", {}) if isinstance(result, dict) else {},
+                "details": result.get("details", {}) if isinstance(result, dict) else {},
+            })
+    finally:
+        env.env.close()
 
     # ── Executive Dashboard ─────────────────────────────────────────
     import sys
