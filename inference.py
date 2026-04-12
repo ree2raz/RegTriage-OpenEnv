@@ -110,8 +110,10 @@ def log_step(step: int, action: str, reward: float, done: bool, error: Optional[
 
 def log_end(success: bool, steps: int, score: float, rewards: list[float]) -> None:
     rewards_str = ",".join(f"{r:.2f}" for r in rewards)
+    # NOTE: score is computed internally but NOT emitted per spec.
+    # Spec: [END] success=<bool> steps=<n> rewards=<r1,r2,...,rn>
     print(
-        f"[END] success={str(success).lower()} steps={steps} score={score:.3f} rewards={rewards_str}",
+        f"[END] success={str(success).lower()} steps={steps} rewards={rewards_str}",
         flush=True,
     )
 
