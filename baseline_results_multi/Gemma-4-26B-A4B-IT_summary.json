@@ -1,0 +1,38 @@
+[
+  {
+    "model": "Gemma-4-26B-A4B-IT",
+    "run": 1,
+    "file": "baseline_results_multi/Gemma-4-26B-A4B-IT_run1.json",
+    "overall_avg": 0.6760833333333333,
+    "easy_avg": 0.855,
+    "medium_avg": 0.6734,
+    "hard_avg": 0.6072,
+    "total_time": 176.6,
+    "elapsed_seconds": 178.7,
+    "success": true
+  },
+  {
+    "model": "Gemma-4-26B-A4B-IT",
+    "run": 2,
+    "file": "baseline_results_multi/Gemma-4-26B-A4B-IT_run2.json",
+    "overall_avg": 0.7319166666666667,
+    "easy_avg": 0.855,
+    "medium_avg": 0.6734,
+    "hard_avg": 0.7412,
+    "total_time": 171.4,
+    "elapsed_seconds": 173.4,
+    "success": true
+  },
+  {
+    "model": "Gemma-4-26B-A4B-IT",
+    "run": 3,
+    "file": "baseline_results_multi/Gemma-4-26B-A4B-IT_run3.json",
+    "overall_avg": 0.7472500000000001,
+    "easy_avg": 0.855,
+    "medium_avg": 0.7066,
+    "hard_avg": 0.7448,
+    "total_time": 175.29999999999998,
+    "elapsed_seconds": 177.2,
+    "success": true
+  }
+]

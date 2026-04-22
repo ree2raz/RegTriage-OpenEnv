@@ -1,0 +1,32 @@
+[
+  {
+    "model": "Qwen-3.5-35B-A3B",
+    "run": 1,
+    "file": "baseline_results_multi/Qwen-3.5-35B-A3B_run1.json",
+    "overall_avg": 0.5261666666666667,
+    "easy_avg": 0.9005000000000001,
+    "medium_avg": 0.592,
+    "hard_avg": 0.3106,
+    "total_time": 413.6,
+    "elapsed_seconds": 415.7,
+    "success": true
+  },
+  {
+    "model": "Qwen-3.5-35B-A3B",
+    "run": 2,
+    "file": "baseline_results_multi/Qwen-3.5-35B-A3B_run2.json",
+    "overall_avg": 0.6405833333333334,
+    "easy_avg": 0.8895,
+    "medium_avg": 0.5948,
+    "hard_avg": 0.5868,
+    "total_time": 345.90000000000003,
+    "elapsed_seconds": 347.7,
+    "success": true
+  },
+  {
+    "model": "Qwen-3.5-35B-A3B",
+    "run": 3,
+    "success": false,
+    "error": "output file not generated"
+  }
+]

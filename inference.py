@@ -347,14 +347,28 @@ Flag violations liberally — false positives have small penalties (-0.03 to -0.
 
 def tool_call_to_action(fn_name: str, fn_args: dict) -> AuditAction:
     """Convert an OpenAI tool call to an AuditAction."""
+    def _int_or_none(val):
+        if val is None or val == "" or val == "null" or val == "None":
+            return None
+        if isinstance(val, int):
+            return val
+        return int(val)
+
+    def _bool_or_none(val):
+        if val is None or val == "" or val == "null":
+            return None
+        if isinstance(val, bool):
+            return val
+        return str(val).lower() in ("true", "1", "yes")
+
     return AuditAction(
         action_type=fn_name,
-        turn_index=fn_args.get("turn_index"),
-        start_turn=fn_args.get("start_turn"),
-        end_turn=fn_args.get("end_turn"),
+        turn_index=_int_or_none(fn_args.get("turn_index")),
+        start_turn=_int_or_none(fn_args.get("start_turn")),
+        end_turn=_int_or_none(fn_args.get("end_turn")),
         violation_type=fn_args.get("violation_type"),
         violation_severity=fn_args.get("violation_severity"),
-        compliance_pass=fn_args.get("compliance_pass"),
+        compliance_pass=_bool_or_none(fn_args.get("compliance_pass")),
         policy_hypothesis=fn_args.get("policy_hypothesis"),
     )
 
@@ -547,7 +561,7 @@ def main():
     print("="*60, file=sys.stderr)
 
     # Save results to JSON file
-    output_file = "baseline_results.json"
+    output_file = os.getenv("OUTPUT_FILE", "baseline_results.json")
     with open(output_file, "w") as f:
         json.dump({
             "model": MODEL_NAME,

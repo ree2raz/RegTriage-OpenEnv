@@ -1,0 +1,314 @@
+{
+  "model": "Qwen/Qwen3.5-35B-A3B",
+  "benchmark": "regtriage",
+  "timestamp": "2026-04-22T08:08:32Z",
+  "results": [
+    {
+      "task_id": "call_001",
+      "difficulty": "easy",
+      "score": 0.923,
+      "time_seconds": 16.2,
+      "breakdown": {
+        "compliance_correct": 0.2,
+        "violation_f1_weighted": 0.6,
+        "efficiency_bonus": 0.103,
+        "severity_calibration_bonus": 0.02,
+        "false_positive_penalty": 0.0,
+        "auto_fail_applied": false
+      },
+      "details": {
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "severity_matches": 1,
+        "ground_truth_count": 1,
+        "agent_flagged_count": 1,
+        "budget_remaining": 38,
+        "total_budget": 74,
+        "missed_high_severity": false
+      }
+    },
+    {
+      "task_id": "call_002",
+      "difficulty": "hard",
+      "score": 0.017,
+      "time_seconds": 27.5,
+      "breakdown": {
+        "compliance_correct": 0.0,
+        "violation_f1_weighted": 0.0,
+        "efficiency_bonus": 0.067,
+        "severity_calibration_bonus": 0.0,
+        "false_positive_penalty": 0.05,
+        "auto_fail_applied": false
+      },
+      "details": {
+        "true_positives": 0,
+        "false_positives": 1,
+        "false_negatives": 0,
+        "severity_matches": 0,
+        "ground_truth_count": 0,
+        "agent_flagged_count": 1,
+        "budget_remaining": 28,
+        "total_budget": 83,
+        "missed_high_severity": false
+      }
+    },
+    {
+      "task_id": "call_003",
+      "difficulty": "easy",
+      "score": 0.856,
+      "time_seconds": 41.9,
+      "breakdown": {
+        "compliance_correct": 0.2,
+        "violation_f1_weighted": 0.6,
+        "efficiency_bonus": 0.036,
+        "severity_calibration_bonus": 0.02,
+        "false_positive_penalty": 0.0,
+        "auto_fail_applied": false
+      },
+      "details": {
+        "true_positives": 1,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "severity_matches": 1,
+        "ground_truth_count": 1,
+        "agent_flagged_count": 1,
+        "budget_remaining": 16,
+        "total_budget": 89,
+        "missed_high_severity": false
+      }
+    },
+    {
+      "task_id": "call_004",
+      "difficulty": "hard",
+      "score": 0.8,
+      "time_seconds": 39.3,
+      "breakdown": {
+        "compliance_correct": 0.2,
+        "violation_f1_weighted": 0.6,
+        "efficiency_bonus": 0.0,
+        "severity_calibration_bonus": 0.0,
+        "false_positive_penalty": 0.0,
+        "auto_fail_applied": false
+      },
+      "details": {
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "severity_matches": 0,
+        "ground_truth_count": 0,
+        "agent_flagged_count": 0,
+        "budget_remaining": 0,
+        "total_budget": 77,
+        "missed_high_severity": false
+      }
+    },
+    {
+      "task_id": "call_005",
+      "difficulty": "medium",
+      "score": 0.871,
+      "time_seconds": 35.0,
+      "breakdown": {
+        "compliance_correct": 0.2,
+        "violation_f1_weighted": 0.6,
+        "efficiency_bonus": 0.031,
+        "severity_calibration_bonus": 0.04,
+        "false_positive_penalty": 0.0,
+        "auto_fail_applied": false
+      },
+      "details": {
+        "true_positives": 2,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "severity_matches": 2,
+        "ground_truth_count": 2,
+        "agent_flagged_count": 2,
+        "budget_remaining": 16,
+        "total_budget": 104,
+        "missed_high_severity": false
+      }
+    },
+    {
+      "task_id": "call_006",
+      "difficulty": "medium",
+      "score": 0.204,
+      "time_seconds": 28.3,
+      "breakdown": {
+        "compliance_correct": 0.2,
+        "violation_f1_weighted": 0.0,
+        "efficiency_bonus": 0.004,
+        "severity_calibration_bonus": 0.0,
+        "false_positive_penalty": 0.0,
+        "auto_fail_applied": true
+      },
+      "details": {
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 2,
+        "severity_matches": 0,
+        "ground_truth_count": 2,
+        "agent_flagged_count": 0,
+        "budget_remaining": 2,
+        "total_budget": 98,
+        "missed_high_severity": true
+      }
+    },
+    {
+      "task_id": "call_007",
+      "difficulty": "medium",
+      "score": 0.875,
+      "time_seconds": 26.2,
+      "breakdown": {
+        "compliance_correct": 0.2,
+        "violation_f1_weighted": 0.6,
+        "efficiency_bonus": 0.035,
+        "severity_calibration_bonus": 0.04,
+        "false_positive_penalty": 0.0,
+        "auto_fail_applied": false
+      },
+      "details": {
+        "true_positives": 2,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "severity_matches": 2,
+        "ground_truth_count": 2,
+        "agent_flagged_count": 2,
+        "budget_remaining": 16,
+        "total_budget": 92,
+        "missed_high_severity": false
+      }
+    },
+    {
+      "task_id": "call_008",
+      "difficulty": "medium",
+      "score": 0.828,
+      "time_seconds": 37.4,
+      "breakdown": {
+        "compliance_correct": 0.2,
+        "violation_f1_weighted": 0.6,
+        "efficiency_bonus": 0.008,
+        "severity_calibration_bonus": 0.02,
+        "false_positive_penalty": 0.0,
+        "auto_fail_applied": false
+      },
+      "details": {
+        "true_positives": 2,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "severity_matches": 1,
+        "ground_truth_count": 2,
+        "agent_flagged_count": 2,
+        "budget_remaining": 4,
+        "total_budget": 104,
+        "missed_high_severity": false
+      }
+    },
+    {
+      "task_id": "call_009",
+      "difficulty": "hard",
+      "score": 0.828,
+      "time_seconds": 31.1,
+      "breakdown": {
+        "compliance_correct": 0.2,
+        "violation_f1_weighted": 0.565,
+        "efficiency_bonus": 0.054,
+        "severity_calibration_bonus": 0.06,
+        "false_positive_penalty": 0.05,
+        "auto_fail_applied": false
+      },
+      "details": {
+        "true_positives": 3,
+        "false_positives": 1,
+        "false_negatives": 0,
+        "severity_matches": 3,
+        "ground_truth_count": 3,
+        "agent_flagged_count": 4,
+        "budget_remaining": 32,
+        "total_budget": 119,
+        "missed_high_severity": false
+      }
+    },
+    {
+      "task_id": "call_010",
+      "difficulty": "hard",
+      "score": 0.36,
+      "time_seconds": 42.9,
+      "breakdown": {
+        "compliance_correct": 0.2,
+        "violation_f1_weighted": 0.24,
+        "efficiency_bonus": 0.0,
+        "severity_calibration_bonus": 0.02,
+        "false_positive_penalty": 0.1,
+        "auto_fail_applied": false
+      },
+      "details": {
+        "true_positives": 1,
+        "false_positives": 1,
+        "false_negatives": 3,
+        "severity_matches": 1,
+        "ground_truth_count": 4,
+        "agent_flagged_count": 2,
+        "budget_remaining": 0,
+        "total_budget": 140,
+        "missed_high_severity": false
+      }
+    },
+    {
+      "task_id": "call_011",
+      "difficulty": "medium",
+      "score": 0.889,
+      "time_seconds": 26.8,
+      "breakdown": {
+        "compliance_correct": 0.2,
+        "violation_f1_weighted": 0.6,
+        "efficiency_bonus": 0.029,
+        "severity_calibration_bonus": 0.06,
+        "false_positive_penalty": 0.0,
+        "auto_fail_applied": false
+      },
+      "details": {
+        "true_positives": 3,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "severity_matches": 3,
+        "ground_truth_count": 3,
+        "agent_flagged_count": 3,
+        "budget_remaining": 14,
+        "total_budget": 95,
+        "missed_high_severity": false
+      }
+    },
+    {
+      "task_id": "call_012",
+      "difficulty": "hard",
+      "score": 0.202,
+      "time_seconds": 31.9,
+      "breakdown": {
+        "compliance_correct": 0.2,
+        "violation_f1_weighted": 0.0,
+        "efficiency_bonus": 0.002,
+        "severity_calibration_bonus": 0.0,
+        "false_positive_penalty": 0.0,
+        "auto_fail_applied": true
+      },
+      "details": {
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 3,
+        "severity_matches": 0,
+        "ground_truth_count": 3,
+        "agent_flagged_count": 0,
+        "budget_remaining": 1,
+        "total_budget": 116,
+        "missed_high_severity": true
+      }
+    }
+  ],
+  "summary": {
+    "easy_avg": 0.8895,
+    "medium_avg": 0.7333999999999999,
+    "hard_avg": 0.44139999999999996,
+    "overall_avg": 0.6377499999999999,
+    "total_time": 384.5
+  }
+}
