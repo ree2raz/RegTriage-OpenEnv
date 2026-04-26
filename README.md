@@ -32,7 +32,7 @@ RegTriage is an OpenEnv RL environment that trains agents to audit financial ser
 **Highlights**
 - Compute budget forces triage strategy over brute-force
 - Severity-weighted F1 grading with auto-fail cap
-- Hero Agent trap — Gemma 4 31B scores 0.918, proving model capability gaps shrink fast
+- Hero Agent trap — Gemma 4 31B scores 0.889, proving model capability gaps shrink fast
 - Draft Incident Reports: ESCALATE / REVIEW / ARCHIVE
 
 ---
@@ -260,7 +260,7 @@ Rules: `reward` and `rewards` formatted to 2 decimal places. `done` and `success
 
 Multi-model baseline results are maintained in the [`baseline_results_multi/`](./baseline_results_multi/) directory. The environment grading is deterministic — a stronger model scores higher.
 
-> **Hero Agent trap**: Gemma 4 31B scores 0.918, proving model capability gaps shrink fast.
+> **Hero Agent trap**: Gemma 4 31B scores 0.889, proving model capability gaps shrink fast.
 
 ---
 
