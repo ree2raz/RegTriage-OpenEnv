@@ -57,7 +57,7 @@ How RegTriage addresses each judging dimension:
 |---|---|---|
 | **Real-world utility** | 30% | CFPB/TCPA violations are documented regulatory risks. Transcripts model real call center scenarios. QA supervisors do this exact job daily. |
 | **Task & grader quality** | 25% | 12 tasks (4 easy/4 medium/4 hard) with deterministic programmatic graders. Severity-weighted F1, auto-fail cap, scores in [0, 1]. |
-| **Environment design** | 20% | Budget-driven action space (6 tools), PII redaction pipeline, stateful WebSocket + stateless HTTP, clean episode boundaries. |
+| **Environment design** | 20% | Budget-driven action space (7 tools), PII redaction pipeline, stateful WebSocket + stateless HTTP, clean episode boundaries. |
 | **Code quality & spec compliance** | 15% | `openenv validate` passes. Uses `create_app()`, standard base types, canonical Dockerfile. No custom HTTP handlers. |
 | **Creativity & novelty** | 10% | Contact center compliance is a novel domain for OpenEnv. Compute-budget-as-triage-signal is non-obvious. |
 
