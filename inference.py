@@ -150,6 +150,18 @@ TOOLS = [
     {
         "type": "function",
         "function": {
+            "name": "get_transcript_length",
+            "description": (
+                "Get the total number of turns and valid index range for this transcript. "
+                "Use this BEFORE calling read_transcript_chunk to avoid requesting "
+                "out-of-range turn indices. Cost: 1 compute unit."
+            ),
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "read_transcript_chunk",
             "description": (
                 "Read a chunk of the call transcript (max 5 turns per call). "
@@ -287,6 +299,7 @@ You are the automated scout — your Draft Incident Report goes to a human super
 You have a compute budget for each audit. Each action costs compute units:
 - get_call_metadata: 5 units (cheap — start here)
 - get_sentiment_timeline: 5 units (cheap — use for triage)
+- get_transcript_length: 1 unit (cheap — use before reading to avoid off-by-one errors)
 - read_transcript_chunk: 3 units PER TURN requested (reading 5 turns = 15 units)
 - analyze_turn: 10 units (includes context window + optional policy rubric)
 - flag_violation: 2 units (cheap — flag freely)
@@ -323,11 +336,12 @@ Budget is dynamically calculated per transcript. If you run out of budget, the s
 ## Audit Strategy
 
 1. START: get_call_metadata to triage (check department, duration, reason)
-2. TRIAGE: get_sentiment_timeline to identify hotspots (where did sentiment shift?)
-3. TARGET: read_transcript_chunk strategically around hotspots or at the opening
-4. ANALYZE: analyze_turn with policy_hypothesis for suspected violations
-5. FLAG: flag_violation for each violation you confirm (severity matters for scoring)
-6. SUBMIT: submit_report with compliance_pass=true ONLY if zero violations found
+2. SIZE: get_transcript_length to know valid turn indices before reading
+3. TRIAGE: get_sentiment_timeline to identify hotspots (where did sentiment shift?)
+4. TARGET: read_transcript_chunk strategically around hotspots or at the opening
+5. ANALYZE: analyze_turn with policy_hypothesis for suspected violations
+6. FLAG: flag_violation for each violation you confirm (severity matters for scoring)
+7. SUBMIT: submit_report with compliance_pass=true ONLY if zero violations found
 
 ## Scoring
 Your grade is computed from:

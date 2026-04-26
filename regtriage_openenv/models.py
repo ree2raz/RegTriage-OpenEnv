@@ -21,12 +21,13 @@ from openenv.core.env_server.types import Action, Observation, State
 class AuditAction(Action):
     """What the agent can do each step.
 
-    The agent selects one of 6 tools via action_type, passing
+    The agent selects one of 7 tools via action_type, passing
     tool-specific parameters as needed.
 
     Tools:
         get_call_metadata       — No params. Returns call context.
         get_sentiment_timeline  — No params. Returns sentiment shifts.
+        get_transcript_length   — No params. Returns turn count and valid range. Cost: 1.
         read_transcript_chunk   — Requires start_turn, end_turn. Max 5 turns.
                                    Cost: 3 compute units per turn requested.
         analyze_turn            — Requires turn_index. Optional policy_hypothesis.
@@ -38,7 +39,7 @@ class AuditAction(Action):
     """
     action_type: str = Field(
         default="get_call_metadata",
-        description="One of: get_call_metadata, get_sentiment_timeline, "
+        description="One of: get_call_metadata, get_sentiment_timeline, get_transcript_length, "
                     "read_transcript_chunk, analyze_turn, flag_violation, submit_report"
     )
     # Tool-specific parameters (optional depending on action_type)

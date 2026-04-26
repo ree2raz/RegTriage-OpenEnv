@@ -7,15 +7,16 @@ Implements the OpenEnv API contract:
     state           → AuditState (property)
 
 The agent plays the role of a QA supervisor auditing call transcripts
-for compliance violations using 6 strategic tools.
+for compliance violations using 7 strategic tools.
 
 Tools:
     1. get_call_metadata       – Triage: call context without transcript (5 units)
     2. get_sentiment_timeline  – Hotspot detection: where sentiment shifted (5 units)
-    3. read_transcript_chunk   – Strategic reading: 3 units per turn requested
-    4. analyze_turn            – Contextual policy analysis: N-1, N, N+1 turns + rubric (10 units)
-    5. flag_violation          – Record findings: type + severity + turn (2 units)
-    6. submit_report           – Final grading: severity-weighted F1 score (0 units, always allowed)
+    3. get_transcript_length   – Range safety: turn count and valid indices (1 unit)
+    4. read_transcript_chunk   – Strategic reading: 3 units per turn requested
+    5. analyze_turn            – Contextual policy analysis: N-1, N, N+1 turns + rubric (10 units)
+    6. flag_violation          – Record findings: type + severity + turn (2 units)
+    7. submit_report           – Final grading: severity-weighted F1 score (0 units, always allowed)
 
 Compute Budget:
     Actions have weighted costs reflecting real-world resource usage.
@@ -222,6 +223,7 @@ COMPLIANCE_RUBRIC = {
 ACTION_COSTS = {
     "get_call_metadata": 5,       # Quick DB lookup, small payload
     "get_sentiment_timeline": 5,  # Pre-computed data
+    "get_transcript_length": 1,   # Trivial: returns turn count and valid index range
     "read_transcript_chunk": 3,   # Per turn requested (dynamic)
     "analyze_turn": 10,           # Contextual analysis + rubric
     "flag_violation": 2,          # Simple state recording
@@ -354,7 +356,7 @@ class CallQAEnv(Environment[AuditAction, AuditObservation, AuditState]):
             if action.start_turn is not None and action.end_turn is not None:
                 turns_requested = action.end_turn - action.start_turn + 1
                 return ACTION_COSTS["read_transcript_chunk"] * turns_requested
-            return ACTION_COSTS["read_transcript_chunk"] * self.CHUNK_MAX_TURNS  # assume max if invalid
+            return 0  # missing params — will be caught by pre-validation; don't charge
 
         return ACTION_COSTS.get(action.action_type, MIN_MEANINGFUL_COST)
 
@@ -428,6 +430,74 @@ class CallQAEnv(Environment[AuditAction, AuditObservation, AuditState]):
                 done=True,
                 reward=0.0
             )
+
+        # ── Pre-validation: read_transcript_chunk ──────────────────────
+        # Validate before touching budget — agents should not pay for
+        # invalid requests. Checks params exist, indices in range,
+        # and chunk size respects CHUNK_MAX_TURNS.
+        # Invalid attempts still count as steps (they consumed a turn)
+        # and incur the -0.02 penalty, but cost zero budget.
+        if action.action_type == "read_transcript_chunk":
+            turns = self.current["turns"]
+            start = action.start_turn
+            end = action.end_turn
+            last_valid = len(turns) - 1
+            if start is None or end is None:
+                self.step_count += 1
+                self.actions_taken.append(action.action_type)
+                self.cumulative_reward -= 0.02
+                return AuditObservation(
+                    result={"error": "Provide start_turn and end_turn parameters."},
+                    checklist=self._build_checklist(),
+                    system_feedback="Error: Provide start_turn and end_turn parameters.",
+                    done=False,
+                    reward=-0.02
+                )
+            if start < 0:
+                self.step_count += 1
+                self.actions_taken.append(action.action_type)
+                self.cumulative_reward -= 0.02
+                return AuditObservation(
+                    result={"error": f"start_turn {start} must be non-negative. Valid indices: [0, {last_valid}]."},
+                    checklist=self._build_checklist(),
+                    system_feedback=f"Error: start_turn {start} must be non-negative.",
+                    done=False,
+                    reward=-0.02
+                )
+            if end > last_valid:
+                self.step_count += 1
+                self.actions_taken.append(action.action_type)
+                self.cumulative_reward -= 0.02
+                return AuditObservation(
+                    result={"error": f"Turn {end} doesn't exist. Last valid turn is {last_valid}."},
+                    checklist=self._build_checklist(),
+                    system_feedback=f"Error: Turn {end} doesn't exist. Last valid turn is {last_valid}.",
+                    done=False,
+                    reward=-0.02
+                )
+            if start > end:
+                self.step_count += 1
+                self.actions_taken.append(action.action_type)
+                self.cumulative_reward -= 0.02
+                return AuditObservation(
+                    result={"error": f"start_turn ({start}) cannot exceed end_turn ({end})."},
+                    checklist=self._build_checklist(),
+                    system_feedback=f"Error: start_turn ({start}) cannot exceed end_turn ({end}).",
+                    done=False,
+                    reward=-0.02
+                )
+            chunk_size = end - start + 1
+            if chunk_size > self.CHUNK_MAX_TURNS:
+                self.step_count += 1
+                self.actions_taken.append(action.action_type)
+                self.cumulative_reward -= 0.02
+                return AuditObservation(
+                    result={"error": f"Chunk too large ({chunk_size} turns). Maximum {self.CHUNK_MAX_TURNS} turns per read."},
+                    checklist=self._build_checklist(),
+                    system_feedback=f"Error: Chunk too large ({chunk_size} turns). Maximum {self.CHUNK_MAX_TURNS}.",
+                    done=False,
+                    reward=-0.02
+                )
 
         # ── Budget check before execution ─────────────────────────────
         action_cost = self._get_action_cost(action)
@@ -511,6 +581,9 @@ class CallQAEnv(Environment[AuditAction, AuditObservation, AuditState]):
         elif tool == "get_sentiment_timeline":
             return self._tool_get_sentiment_timeline(), 0.05, "Sentiment timeline returned. Use hotspots to target your investigation."
 
+        elif tool == "get_transcript_length":
+            return self._tool_get_transcript_length(), 0.02, "Transcript length returned. Use this to plan your read ranges."
+
         elif tool == "read_transcript_chunk":
             result = self._tool_read_transcript_chunk(action.start_turn, action.end_turn)
             if "error" in result:
@@ -559,6 +632,17 @@ class CallQAEnv(Environment[AuditAction, AuditObservation, AuditState]):
         gt = self.current["ground_truth"]
         return gt.get("customer_sentiment_shifts", [])
 
+    def _tool_get_transcript_length(self) -> dict:
+        """Return total turn count and valid index range.
+        Zero-cost lookup that helps agents avoid off-by-one errors
+        when constructing read_transcript_chunk ranges."""
+        turns = self.current["turns"]
+        return {
+            "total_turns": len(turns),
+            "valid_turn_indices": f"0 to {len(turns) - 1} (inclusive)",
+            "max_chunk_size": self.CHUNK_MAX_TURNS,
+        }
+
     def _tool_read_transcript_chunk(self, start: Optional[int], end: Optional[int]) -> dict:
         """Return a chunk of the transcript (max CHUNK_MAX_TURNS turns).
         Forces strategic reading — agent cannot dump the whole thing.
@@ -567,8 +651,12 @@ class CallQAEnv(Environment[AuditAction, AuditObservation, AuditState]):
 
         if start is None or end is None:
             return {"error": "Provide start_turn and end_turn parameters."}
-        if start < 0 or end >= len(turns) or start > end:
-            return {"error": f"Invalid range [{start}, {end}]. Valid: [0, {len(turns) - 1}]."}
+        if start < 0:
+            return {"error": f"start_turn {start} must be non-negative. Valid indices: [0, {len(turns) - 1}]."}
+        if end >= len(turns):
+            return {"error": f"Turn {end} doesn't exist. Last valid turn is {len(turns) - 1}."}
+        if start > end:
+            return {"error": f"start_turn ({start}) cannot exceed end_turn ({end})."}
         if (end - start + 1) > self.CHUNK_MAX_TURNS:
             return {
                 "error": f"Chunk too large ({end - start + 1} turns). "

@@ -18,7 +18,6 @@ from regtriage_openenv.models import (
     AuditAction,
     AuditObservation,
     AuditState,
-    StepResult,
 )
 
 __all__ = [
@@ -26,5 +25,4 @@ __all__ = [
     "AuditAction",
     "AuditObservation",
     "AuditState",
-    "StepResult",
 ]

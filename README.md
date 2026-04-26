@@ -84,11 +84,11 @@ We deliberately target violations that trigger **lawsuits and P&L damage** — n
 
 ### AuditAction (Action Space)
 
-The agent chooses one of 6 tools per step:
+The agent chooses one of 7 tools per step:
 
 | Field | Type | Description |
 |---|---|---|
-| `action_type` | string | Which tool: `get_call_metadata`, `get_sentiment_timeline`, `read_transcript_chunk`, `analyze_turn`, `flag_violation`, `submit_report` |
+| `action_type` | string | Which tool: `get_call_metadata`, `get_sentiment_timeline`, `get_transcript_length`, `read_transcript_chunk`, `analyze_turn`, `flag_violation`, `submit_report` |
 | `turn_index` | int? | Target turn for `analyze_turn` or `flag_violation` |
 | `start_turn` | int? | Start of range for `read_transcript_chunk` |
 | `end_turn` | int? | End of range for `read_transcript_chunk` (max 5 turns from start) |
@@ -195,7 +195,7 @@ Call Transcript → PII Redaction → CallQAEnv → Draft Incident Report
 **Flow:**
 1. **Call Transcript** (12 scenarios) enters the pipeline
 2. **PII Redaction** scrubs SSN, accounts, names (28 unit tests)
-3. **CallQAEnv** exposes 6 tools: `get_call_metadata`, `get_sentiment_timeline`, `read_transcript_chunk`, `analyze_turn`, `flag_violation`, `submit_report`
+3. **CallQAEnv** exposes 7 tools: `get_call_metadata`, `get_sentiment_timeline`, `get_transcript_length`, `read_transcript_chunk`, `analyze_turn`, `flag_violation`, `submit_report`
 4. **Budget enforcement**: `50 + (total_turns × 3)` — forces triage over brute-force
 5. **Severity-weighted F1 grading** with auto-fail cap at 0.30
 6. **Draft Incident Report** routes to ESCALATE / REVIEW / ARCHIVE for human sign-off
