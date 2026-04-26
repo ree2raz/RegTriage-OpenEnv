@@ -18,7 +18,7 @@ pinned: false
 
 > **We are solving billion-dollar compliance risks, not checking if the agent smiled through the phone.**
 
-RegTriage is an OpenEnv RL environment that trains agents to perform **regulatory compliance auditing** on financial services contact center transcripts. It targets the **100% Coverage Problem**: human QA supervisors audit 1–3% of calls; the other 97% are unreviewed regulatory exposure. RegTriage is the training ground where AI agents learn to close that gap — producing **Draft Incident Reports** for human supervisor sign-off, not replacing humans.
+RegTriage is an OpenEnv RL environment that trains agents to audit financial services call transcripts for **CFPB, TCPA, and GDPR/CCPA violations**. It solves the **100% Coverage Problem**: human QA supervisors audit 1–3% of calls; RegTriage covers the other 97% with **Draft Incident Reports** for human supervisor sign-off. Baselines published, training loop in progress.
 
 [![Hugging Face Space](https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Space-blue)](https://huggingface.co/spaces/ree2raz/RegTriage-OpenEnv)
 [![Validate](https://img.shields.io/badge/openenv_validate-passed-brightgreen)]()
