@@ -20,8 +20,20 @@ pinned: false
 
 RegTriage is an OpenEnv RL environment that trains agents to perform **regulatory compliance auditing** on financial services contact center transcripts. It targets the **100% Coverage Problem**: human QA supervisors audit 1–3% of calls; the other 97% are unreviewed regulatory exposure. RegTriage is the training ground where AI agents learn to close that gap — producing **Draft Incident Reports** for human supervisor sign-off, not replacing humans.
 
-[![Hugging Face Space](https://img.shields.io/badge/🤗%20HuggingFace-Space-blue)](https://huggingface.co/spaces/ree2raz/RegTriage-OpenEnv)
+[![Hugging Face Space](https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Space-blue)](https://huggingface.co/spaces/ree2raz/RegTriage-OpenEnv)
 [![Validate](https://img.shields.io/badge/openenv_validate-passed-brightgreen)]()
+
+| | |
+|---|---|
+| **Tasks** | 12 |
+| **Violation Types** | 6 |
+| **Difficulty Tiers** | 3 |
+
+**Highlights**
+- Compute budget forces triage strategy over brute-force
+- Severity-weighted F1 grading with auto-fail cap
+- Hero Agent trap — Gemma 4 31B scores 0.918, proving model capability gaps shrink fast
+- Draft Incident Reports: ESCALATE / REVIEW / ARCHIVE
 
 ---
 
@@ -171,6 +183,22 @@ A 10-turn easy call gets 80 budget. A 30-turn hard call gets 140. Reading is pri
 | **Auto-fail cap** | Score ≤ 0.30 if all HIGH violations missed |
 
 **Type-only matching**: Violations match by category, not turn index. Multi-turn violations (e.g., escalation failures spanning turns 8–14) get credit regardless of which turn the agent points to.
+
+---
+
+## Architecture
+
+```
+Call Transcript → PII Redaction → CallQAEnv → Draft Incident Report
+```
+
+**Flow:**
+1. **Call Transcript** (12 scenarios) enters the pipeline
+2. **PII Redaction** scrubs SSN, accounts, names (28 unit tests)
+3. **CallQAEnv** exposes 6 tools: `get_call_metadata`, `get_sentiment_timeline`, `read_transcript_chunk`, `analyze_turn`, `flag_violation`, `submit_report`
+4. **Budget enforcement**: `50 + (total_turns × 3)` — forces triage over brute-force
+5. **Severity-weighted F1 grading** with auto-fail cap at 0.30
+6. **Draft Incident Report** routes to ESCALATE / REVIEW / ARCHIVE for human sign-off
 
 ---
 
