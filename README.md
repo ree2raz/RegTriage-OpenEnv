@@ -202,24 +202,57 @@ Call Transcript → PII Redaction → CallQAEnv → Draft Incident Report
 
 ### System Architecture
 
-```mermaid
-flowchart LR
-    A[Call Transcript<br/>12 scenarios] --> B[PII Redaction<br/>SSN · Accounts · Names<br/>28 unit tests]
-    B --> C[CallQAEnv]
-    C --> D[Severity-weighted F1<br/>auto-fail cap at 0.30]
-    D --> E[Draft Incident Report<br/>ESCALATE / REVIEW / ARCHIVE]
+<div align="center">
+  <svg viewBox="0 0 820 360" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="130" width="140" height="60" rx="6" fill="var(--color-hover-bg)" stroke="var(--color-link)" stroke-width="1.5"/>
+    <text x="80" y="155" text-anchor="middle" fill="var(--color-text)" font-size="11" font-weight="600">Call Transcript</text>
+    <text x="80" y="172" text-anchor="middle" fill="var(--color-text)" font-size="9" opacity="0.6">12 scenarios</text>
 
-    subgraph C[CallQAEnv]
-        direction TB
-        C1[get_call_metadata]
-        C2[get_sentiment_timeline]
-        C3[read_transcript_chunk]
-        C4[analyze_turn]
-        C5[flag_violation]
-        C6[submit_report]
-        CB[Budget: 50 + turns × 3]
-    end
-```
+    <line x1="150" y1="160" x2="185" y2="160" stroke="var(--color-link)" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+    <rect x="190" y="120" width="140" height="80" rx="6" fill="var(--color-hover-bg)" stroke="var(--color-link)" stroke-width="1.5"/>
+    <text x="260" y="148" text-anchor="middle" fill="var(--color-text)" font-size="11" font-weight="600">PII Redaction</text>
+    <text x="260" y="165" text-anchor="middle" fill="var(--color-text)" font-size="9" opacity="0.6">SSN · Accounts · Names</text>
+    <text x="260" y="180" text-anchor="middle" fill="var(--color-text)" font-size="8" opacity="0.5">28 unit tests</text>
+
+    <line x1="330" y1="160" x2="365" y2="160" stroke="var(--color-link)" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+    <rect x="370" y="50" width="240" height="230" rx="8" fill="var(--color-hover-bg)" stroke="var(--color-link)" stroke-width="2"/>
+    <text x="490" y="78" text-anchor="middle" fill="var(--color-link)" font-size="13" font-weight="700">CallQAEnv</text>
+    <line x1="390" y1="88" x2="590" y2="88" stroke="var(--color-border)" stroke-width="1"/>
+
+    <text x="400" y="112" fill="var(--color-text)" font-size="9.5">1. get_call_metadata</text>
+    <text x="400" y="130" fill="var(--color-text)" font-size="9.5">2. get_sentiment_timeline</text>
+    <text x="400" y="148" fill="var(--color-text)" font-size="9.5">3. read_transcript_chunk</text>
+    <text x="400" y="166" fill="var(--color-text)" font-size="9.5">4. analyze_turn</text>
+    <text x="400" y="184" fill="var(--color-text)" font-size="9.5">5. flag_violation</text>
+    <text x="400" y="202" fill="var(--color-text)" font-size="9.5">6. submit_report</text>
+
+    <rect x="390" y="218" width="200" height="28" rx="4" fill="none" stroke="var(--color-border)" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="490" y="237" text-anchor="middle" fill="var(--color-text)" font-size="9" opacity="0.7">Budget: 50 + turns × 3</text>
+
+    <line x1="490" y1="280" x2="490" y2="310" stroke="var(--color-link)" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+    <rect x="390" y="315" width="200" height="40" rx="6" fill="var(--color-hover-bg)" stroke="var(--color-border)" stroke-width="1.5"/>
+    <text x="490" y="335" text-anchor="middle" fill="var(--color-text)" font-size="10" font-weight="600">Severity-weighted F1</text>
+    <text x="490" y="348" text-anchor="middle" fill="var(--color-text)" font-size="8" opacity="0.6">auto-fail cap at 0.30</text>
+
+    <line x1="610" y1="160" x2="650" y2="160" stroke="var(--color-link)" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+    <rect x="655" y="100" width="155" height="120" rx="6" fill="var(--color-hover-bg)" stroke="var(--color-link)" stroke-width="1.5"/>
+    <text x="732" y="125" text-anchor="middle" fill="var(--color-link)" font-size="11" font-weight="700">Draft Incident Report</text>
+    <line x1="670" y1="135" x2="795" y2="135" stroke="var(--color-border)" stroke-width="1"/>
+    <text x="672" y="155" fill="var(--color-text)" font-size="9">ESCALATE → same-day SLA</text>
+    <text x="672" y="172" fill="var(--color-text)" font-size="9">REVIEW → next-day SLA</text>
+    <text x="672" y="189" fill="var(--color-text)" font-size="9">ARCHIVE → no review</text>
+    <text x="672" y="210" fill="var(--color-text)" font-size="8" opacity="0.6">AI scouts · Humans judge</text>
+
+    <defs>
+      <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="var(--color-link)"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
 
 ---
 
