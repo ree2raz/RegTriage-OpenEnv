@@ -243,7 +243,7 @@ port: 8000
 The `inference.py` script emits structured logs to stdout matching the hackathon specification:
 
 ```
-[START] task=call_001 env=regtriage model=Qwen/Qwen2.5-72B-Instruct
+[START] task=call_001 env=regtriage model=<your-model>
 [STEP] step=1 action=get_call_metadata() reward=0.05 done=false error=null
 [STEP] step=2 action=get_sentiment_timeline() reward=0.05 done=false error=null
 [STEP] step=3 action=read_transcript_chunk(start_turn=0,end_turn=2) reward=0.02 done=false error=null
@@ -258,24 +258,9 @@ Rules: `reward` and `rewards` formatted to 2 decimal places. `done` and `success
 
 ## Baseline Scores
 
-Running `inference.py` with `Qwen/Qwen2.5-72B-Instruct` via Hugging Face router on all 12 tasks:
+Multi-model baseline results are maintained in the [`baseline_results_multi/`](./baseline_results_multi/) directory. The environment grading is deterministic — a stronger model scores higher.
 
-| Task | Difficulty | Score |
-|---|---|---|
-| call_001 | Easy | 0.936 |
-| call_002 | Hard (clean) | 0.900 |
-| call_003 | Easy | ~0.90 |
-| call_004 | Hard (clean) | ~0.90 |
-| call_005 | Medium | ~0.80 |
-| call_006 | Medium | ~0.80 |
-| call_007 | Medium | ~0.80 |
-| call_008 | Medium | ~0.80 |
-| call_009 | Hard | ~0.65 |
-| call_010 | Hard | ~0.65 |
-| call_011 | Medium | ~0.75 |
-| call_012 | Hard | ~0.65 |
-
-> Baseline scores are model-dependent. The environment grading is deterministic — a stronger model would score higher.
+> **Hero Agent trap**: Gemma 4 31B scores 0.918, proving model capability gaps shrink fast.
 
 ---
 
@@ -357,7 +342,7 @@ websocat wss://ree2raz-regtriage-openenv.hf.space/ws
 |---|---|---|
 | `HF_TOKEN` | — | Yes (for inference.py) |
 | `API_BASE_URL` | `https://router.huggingface.co/v1` | No |
-| `MODEL_NAME` | `Qwen/Qwen2.5-72B-Instruct` | No |
+| `MODEL_NAME` | — | No |
 
 ---
 
