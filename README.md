@@ -417,3 +417,7 @@ The agent is a **scout, not a judge**. ESCALATE/REVIEW/ARCHIVE triage routes rep
 ---
 
 Apache 2.0 · Built for the [Meta PyTorch OpenEnv Hackathon](https://www.scaler.com/school-of-technology/meta-pytorch-hackathon)
+
+## Further reading
+
+- [An RL Environment for Regulatory Compliance Auditing: Design Decisions and Baseline Findings](https://rituraj.info/posts/regtriage-rl-environment-compliance-auditing/) — the blog post covering the design decisions, baseline findings, and the Hero Agent trap in detail.
